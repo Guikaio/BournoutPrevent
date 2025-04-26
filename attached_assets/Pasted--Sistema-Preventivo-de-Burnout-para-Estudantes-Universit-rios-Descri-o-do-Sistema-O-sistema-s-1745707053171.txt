@@ -1,0 +1,204 @@
+# Sistema Preventivo de Burnout para Estudantes Universitários
+
+## Descrição do Sistema:
+O sistema será desenvolvido utilizando Flask e Python. A principal funcionalidade é a avaliação do nível de burnout dos estudantes universitários, com base no Inventário de Burnout de Maslach (MBI) adaptado para este público. O sistema permitirá que os usuários se cadastrem, façam login, respondam a um questionário de 25 perguntas, e acompanhem sua evolução em um dashboard.
+
+### Funcionalidades:
+1. **Cadastro de Usuário com Login e Senha:**
+   - Os usuários poderão se cadastrar e realizar login com suas credenciais.
+   - O sistema deve verificar se o login está correto e direcionar o usuário para a página do questionário.
+
+2. **Questionário de 25 Perguntas:**
+   O questionário será baseado no Inventário de Burnout de Maslach (MBI), adaptado para estudantes universitários, contendo as seguintes perguntas:
+
+   - **Qual sua idade?**
+   - **Gênero:**
+     - Masculino
+     - Feminino
+     - Prefiro não dizer
+     - Outro
+   - **Ano do curso:**
+     - 1º ano
+     - 2º ano
+     - 3º ano
+     - 4º ano ou mais
+   - **Área do curso:**
+     - Ciências Exatas
+     - Ciências Humanas
+     - Ciências Biológicas
+     - Saúde
+     - Engenharias
+     - Outros
+   - **Sinto-me emocionalmente exausto(a) devido aos meus estudos.**
+     - 0 - Nunca
+     - 1 - Raramente
+     - 2 - Às vezes
+     - 3 - Frequentemente
+     - 4 - Sempre
+   - **Após minhas aulas, sinto-me sem energia para realizar outras atividades.**
+     - 0 - Nunca
+     - 1 - Raramente
+     - 2 - Às vezes
+     - 3 - Frequentemente
+     - 4 - Sempre
+   - **Meus estudos têm me deixado fisicamente exausto(a).**
+     - 0 - Nunca
+     - 1 - Raramente
+     - 2 - Às vezes
+     - 3 - Frequentemente
+     - 4 - Sempre
+   - **Sinto sensações físicas desagradáveis após um dia de estudo intenso.**
+     - 0 - Nunca
+     - 1 - Raramente
+     - 2 - Às vezes
+     - 3 - Frequentemente
+     - 4 - Sempre
+   - **Após um dia de estudo, só consigo pensar em descansar.**
+     - 0 - Nunca
+     - 1 - Raramente
+     - 2 - Às vezes
+     - 3 - Frequentemente
+     - 4 - Sempre
+   - **Tenho dúvidas se terei energia suficiente para concluir meu curso.**
+     - 0 - Nunca
+     - 1 - Raramente
+     - 2 - Às vezes
+     - 3 - Frequentemente
+     - 4 - Sempre
+   - **Penso frequentemente em mudar de curso.**
+     - 0 - Nunca
+     - 1 - Raramente
+     - 2 - Às vezes
+     - 3 - Frequentemente
+     - 4 - Sempre
+   - **Com o passar do tempo, sinto que o curso não é o que eu esperava.**
+     - 0 - Nunca
+     - 1 - Raramente
+     - 2 - Às vezes
+     - 3 - Frequentemente
+     - 4 - Sempre
+   - **Meu interesse pelo curso tem diminuído gradualmente.**
+     - 0 - Nunca
+     - 1 - Raramente
+     - 2 - Às vezes
+     - 3 - Frequentemente
+     - 4 - Sempre
+   - **Certos conteúdos do curso me fazem questionar minha escolha profissional.**
+     - 0 - Nunca
+     - 1 - Raramente
+     - 2 - Às vezes
+     - 3 - Frequentemente
+     - 4 - Sempre
+   - **Tenho dúvidas sobre a utilidade dos meus estudos para minha futura carreira.**
+     - 0 - Nunca
+     - 1 - Raramente
+     - 2 - Às vezes
+     - 3 - Frequentemente
+     - 4 - Sempre
+   - **Os conteúdos das disciplinas não têm me proporcionado aprendizado significativo.**
+     - 0 - Nunca
+     - 1 - Raramente
+     - 2 - Às vezes
+     - 3 - Frequentemente
+     - 4 - Sempre
+   - **Vejo pouca relação entre o que aprendo e minha futura atuação profissional.**
+     - 0 - Nunca
+     - 1 - Raramente
+     - 2 - Às vezes
+     - 3 - Frequentemente
+     - 4 - Sempre
+   - **Sinto que o que aprendo no curso tem pouca relevância para minha formação.**
+     - 0 - Nunca
+     - 1 - Raramente
+     - 2 - Às vezes
+     - 3 - Frequentemente
+     - 4 - Sempre
+   - **Quantas horas por dia, em média, você dedica aos estudos?**
+     - Menos de 2 horas por dia
+     - 2-4 horas por dia
+     - 4-6 horas por dia
+     - 6 horas ou mais por dia
+   - **Você sente que tem tempo suficiente para descansar e se recuperar do estresse acadêmico?**
+     - Sim, sempre
+     - Às vezes
+     - Raramente
+     - Nunca
+   - **Quantas horas você dorme por noite, em média?**
+     - Menos de 4 horas
+     - 4-5 horas
+     - 6-7 horas
+     - 8 horas ou mais
+   - **Como você avalia a qualidade do seu sono?**
+     - Excelente (Acordo bem descansado)
+     - Boa (Acordo bem, mas poderia ser melhor)
+     - Regular (Sinto que meu sono não é reparador)
+     - Ruim (Acordo cansado com frequência)
+     - Muito ruim (Tenho insônia ou outros distúrbios do sono)
+   - **Com que frequência você consome cafeína, energéticos ou outros estimulantes para manter o foco nos estudos?**
+     - Nunca
+     - Raramente
+     - Algumas vezes
+     - Frequentemente
+     - Sempre
+   - **Você já buscou ou recebe algum tipo de suporte psicológico para lidar com o estresse acadêmico?**
+     - Sim, faço acompanhamento psicológico regularmente
+     - Sim, mas apenas em momentos de crise
+     - Não, mas penso em buscar ajuda
+     - Não, e não sinto necessidade
+   - **O quanto você se sente motivado(a) e satisfeito(a) com seu curso atualmente?**
+     - Muito motivado(a), adoro meu curso
+     - Moderadamente motivado(a), mas há desafios
+     - Pouco motivado(a), tenho dúvidas sobre minha escolha
+     - Nada motivado(a), penso em desistir
+
+3. **Cálculo do Nível de Burnout:**
+   - O algoritmo calculará a porcentagem de burnout com base nas respostas do questionário.
+   - O sistema deve calcular a porcentagem de burnout e informar ao usuário o quão próximo ele está de desenvolver a Síndrome de Burnout.
+
+4. **Página de Dashboard:**
+   - Após o preenchimento do questionário, o usuário será direcionado para o dashboard.
+   - O dashboard exibirá:
+     - Gráfico de pizza mostrando a porcentagem do nível de burnout.
+     - Gráfico linear mostrando as variações do nível de burnout em diferentes datas.
+   - O sistema deve salvar as respostas do questionário no banco de dados.
+
+5. **Dicas de Prevenção e Alerta Médico:**
+   - O dashboard terá um botão que leva o usuário a uma página com dicas de como evitar o burnout e como se prevenir.
+   - Quando o nível de burnout for superior a 80%, um aviso de alerta será exibido, recomendando que o usuário procure um profissional médico especializado.
+
+6. **Banco de Dados:**
+   - Utilizar o **Firestore** para armazenar as informações dos usuários e suas respostas ao questionário.
+   - Cada usuário terá um registro com suas respostas e a evolução de seus níveis de burnout ao longo do tempo.
+
+7. **Interface Web:**
+   - A interface web será desenvolvida utilizando **HTML** e **CSS** para a estruturação e estilização das páginas.
+   - As páginas devem ser simples, limpas e responsivas, com um design que seja fácil de usar.
+   - O dashboard será uma página principal, onde o usuário verá os gráficos e as informações sobre o seu nível de burnout.
+
+### Requisitos Técnicos:
+- **Backend:** Flask (Python)
+- **Banco de Dados:** Firestore (Firebase)
+- **Autenticação de Usuário:** Login com e-mail e senha
+- **Frontend:** Interface simples com HTML e CSS para estruturar e estilizar as páginas.
+- **Gráficos:** Usar uma biblioteca como Plotly ou Matplotlib para gerar gráficos de pizza e gráficos lineares.
+- **Dicas e Alertas:** Página com dicas de prevenção e alerta para procurar ajuda médica.
+
+### Fluxo do Sistema:
+1. **Cadastro e Login:**
+   - O usuário se cadastra e faz login com e-mail e senha.
+   - Após o login, o usuário é direcionado para a página do questionário.
+
+2. **Preenchimento do Questionário:**
+   - O usuário preenche o questionário com 25 perguntas.
+   - O algoritmo calcula o nível de burnout com base nas respostas e exibe a porcentagem de burnout.
+
+3. **Dashboard:**
+   - O usuário é redirecionado para o dashboard onde verá o gráfico de pizza e gráfico linear.
+   - A pontuação de burnout será salva no banco de dados.
+
+4. **Dicas e Alerta Médico:**
+   - O usuário pode acessar dicas para prevenir o burnout.
+   - Se a pontuação for superior a 80%, o sistema exibirá um alerta sugerindo que o usuário procure um médico especializado.
+
+## Objetivo:
+Criar um sistema de monitoramento e prevenção do burnout para estudantes universitários, com funcionalidades de avaliação, acompanhamento da evolução do nível de burnout e orientação preventiva.
