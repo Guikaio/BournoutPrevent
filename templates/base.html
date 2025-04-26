@@ -17,10 +17,7 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore-compat.js"></script>
+    <!-- Removed Firebase SDK references -->
 </head>
 <body>
     <!-- Navbar -->
@@ -133,14 +130,19 @@
     <script src="{{ url_for('static', filename='js/chart-config.js') }}"></script>
     <script src="{{ url_for('static', filename='js/form-validation.js') }}"></script>
     
-    <!-- Firebase Config -->
-    {% if firebase_api_key and firebase_project_id and firebase_app_id %}
-    <script src="{{ url_for('static', filename='js/firebase-config.js') }}"></script>
+    <!-- Custom Scripts -->
     <script>
-        // Initialize Firebase with config from server
-        initializeFirebase('{{ firebase_api_key }}', '{{ firebase_project_id }}', '{{ firebase_app_id }}');
+        // Logout button functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const logoutBtn = document.getElementById('logout-button');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    window.location.href = '{{ url_for("logout") }}';
+                });
+            }
+        });
     </script>
-    {% endif %}
     
     <!-- Page-specific scripts -->
     {% block scripts %}{% endblock %}

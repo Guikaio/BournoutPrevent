@@ -88,9 +88,82 @@
         }
     });
     
-    // Initialize Firebase
+    // Form validation
     document.addEventListener('DOMContentLoaded', function() {
-        console.log("Firebase initialized");
+        const registrationForm = document.getElementById('registration-form');
+        if (registrationForm) {
+            registrationForm.addEventListener('submit', function(e) {
+                // Validate form before submission
+                const name = document.getElementById('name').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const password = document.getElementById('password').value;
+                const confirmPassword = document.getElementById('confirm-password').value;
+                
+                let isValid = true;
+                
+                // Validate name
+                if (!name) {
+                    showError(document.getElementById('name'), 'O nome é obrigatório');
+                    isValid = false;
+                } else {
+                    clearError(document.getElementById('name'));
+                }
+                
+                // Validate email
+                if (!email) {
+                    showError(document.getElementById('email'), 'O e-mail é obrigatório');
+                    isValid = false;
+                } else if (!isValidEmail(email)) {
+                    showError(document.getElementById('email'), 'Digite um e-mail válido');
+                    isValid = false;
+                } else {
+                    clearError(document.getElementById('email'));
+                }
+                
+                // Validate password
+                if (!password) {
+                    showError(document.getElementById('password'), 'A senha é obrigatória');
+                    isValid = false;
+                } else if (password.length < 6) {
+                    showError(document.getElementById('password'), 'A senha deve ter pelo menos 6 caracteres');
+                    isValid = false;
+                } else {
+                    clearError(document.getElementById('password'));
+                }
+                
+                // Validate password confirmation
+                if (password !== confirmPassword) {
+                    showError(document.getElementById('confirm-password'), 'As senhas não coincidem');
+                    isValid = false;
+                } else {
+                    clearError(document.getElementById('confirm-password'));
+                }
+                
+                if (!isValid) {
+                    e.preventDefault();
+                }
+            });
+        }
     });
+    
+    // Validation helpers
+    function isValidEmail(email) {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+    }
+    
+    function showError(inputElement, message) {
+        const feedback = inputElement.parentElement.nextElementSibling;
+        feedback.textContent = message;
+        feedback.style.display = 'block';
+        inputElement.classList.add('is-invalid');
+    }
+    
+    function clearError(inputElement) {
+        const feedback = inputElement.parentElement.nextElementSibling;
+        feedback.textContent = '';
+        feedback.style.display = 'none';
+        inputElement.classList.remove('is-invalid');
+    }
 </script>
 {% endblock %}
