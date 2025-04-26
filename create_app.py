@@ -5,6 +5,9 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 from flask import Flask
 
+# Configure logging
+logging.basicConfig(level=logging.DEBUG)
+
 # Initialize Firestore
 db = None
 try:
@@ -15,19 +18,24 @@ try:
         'projectId': firebase_project_id,
     }
     
-    # Use service account if available in environment
-    cred_json = os.environ.get("FIREBASE_SERVICE_ACCOUNT")
-    if cred_json:
-        cred_dict = json.loads(cred_json)
-        cred = credentials.Certificate(cred_dict)
-    else:
-        # Use application default credentials if service account not provided
-        cred = credentials.ApplicationDefault()
+    # Check if Firebase is already initialized
+    if not firebase_admin._apps:
+        # Not initialized yet, proceed with initialization
+        try:
+            # Use application default credentials
+            cred = credentials.ApplicationDefault()
+            firebase_admin.initialize_app(cred, firebase_config)
+            logging.info("Firebase initialized with application default credentials")
+        except Exception as cred_error:
+            logging.error(f"Error with application default credentials: {cred_error}")
+            # Fall back to a simpler initialization without credentials (limited functionality)
+            firebase_admin.initialize_app(options=firebase_config)
+            logging.info("Firebase initialized without credentials")
     
-    # Initialize Firebase with explicit project ID
-    firebase_admin.initialize_app(cred, firebase_config)
+    # Get Firestore client
     db = firestore.client()
-    logging.info("Firebase initialized successfully with project ID: %s", firebase_project_id)
+    logging.info("Firestore client created successfully")
+    
 except Exception as e:
     logging.error(f"Error initializing Firebase: {e}")
     db = None
