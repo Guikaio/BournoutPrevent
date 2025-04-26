@@ -115,14 +115,22 @@
                         data.append('google_auth', 'true');
                         
                         // Submit to server
-                        fetch('{{ url_for("register") }}', {
+                        fetch('{{ url_for("firebase_auth") }}', {
                             method: 'POST',
                             body: data
                         })
-                        .then(response => {
-                            if (response.redirected) {
-                                window.location.href = response.url;
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success && data.redirect) {
+                                window.location.href = data.redirect;
+                            } else {
+                                console.error("Authentication error:", data.error);
+                                alert("Erro ao registrar: " + (data.error || "Erro desconhecido"));
                             }
+                        })
+                        .catch(error => {
+                            console.error("Error during registration:", error);
+                            alert("Erro de conexão durante o registro");
                         });
                     }).catch((error) => {
                         console.error("Error during Google sign-up:", error);

@@ -34,42 +34,42 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    {% if session.get('user_id') %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('dashboard') }}">
-                                <i class="fas fa-chart-line me-1"></i>Dashboard
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('questionnaire') }}">
-                                <i class="fas fa-list-check me-1"></i>Questionário
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('tips') }}">
-                                <i class="fas fa-lightbulb me-1"></i>Dicas
-                            </a>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-user-circle me-1"></i>{{ session.get('user_name', 'Usuário') }}
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                <li><a class="dropdown-item" href="{{ url_for('logout') }}">Sair</a></li>
-                            </ul>
-                        </li>
-                    {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('login') }}">
-                                <i class="fas fa-sign-in-alt me-1"></i>Login
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('register') }}">
-                                <i class="fas fa-user-plus me-1"></i>Cadastro
-                            </a>
-                        </li>
-                    {% endif %}
+                    <!-- Itens de navegação para usuários autenticados -->
+                    <li class="nav-item auth-nav-item" style="display: {% if session.get('user_id') %}block{% else %}none{% endif %}">
+                        <a class="nav-link" href="{{ url_for('dashboard') }}">
+                            <i class="fas fa-chart-line me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item auth-nav-item" style="display: {% if session.get('user_id') %}block{% else %}none{% endif %}">
+                        <a class="nav-link" href="{{ url_for('questionnaire') }}">
+                            <i class="fas fa-list-check me-1"></i>Questionário
+                        </a>
+                    </li>
+                    <li class="nav-item auth-nav-item" style="display: {% if session.get('user_id') %}block{% else %}none{% endif %}">
+                        <a class="nav-link" href="{{ url_for('tips') }}">
+                            <i class="fas fa-lightbulb me-1"></i>Dicas
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown auth-nav-item" style="display: {% if session.get('user_id') %}block{% else %}none{% endif %}">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-circle me-1"></i><span id="user-name">{{ session.get('user_name', 'Usuário') }}</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="#" id="logout-button">Sair</a></li>
+                        </ul>
+                    </li>
+                    
+                    <!-- Itens de navegação para usuários não autenticados -->
+                    <li class="nav-item unauth-nav-item" style="display: {% if session.get('user_id') %}none{% else %}block{% endif %}">
+                        <a class="nav-link" href="{{ url_for('login') }}">
+                            <i class="fas fa-sign-in-alt me-1"></i>Login
+                        </a>
+                    </li>
+                    <li class="nav-item unauth-nav-item" style="display: {% if session.get('user_id') %}none{% else %}block{% endif %}">
+                        <a class="nav-link" href="{{ url_for('register') }}">
+                            <i class="fas fa-user-plus me-1"></i>Cadastro
+                        </a>
+                    </li>
                 </ul>
             </div>
         </div>

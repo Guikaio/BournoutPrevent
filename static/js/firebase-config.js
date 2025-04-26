@@ -45,13 +45,16 @@ function setupAuthListener() {
         data.append('name', user.displayName);
         data.append('firebase_uid', user.uid);
         
-        fetch('/login', {
+        fetch('/auth/firebase', {
           method: 'POST',
           body: data
         })
-        .then(response => {
-          if (response.redirected) {
-            window.location.href = response.url;
+        .then(response => response.json())
+        .then(data => {
+          if (data.success && data.redirect) {
+            window.location.href = data.redirect;
+          } else {
+            console.error("Auth sync error:", data.error);
           }
         })
         .catch(error => {

@@ -4,7 +4,7 @@ import logging
 import firebase_admin
 from firebase_admin import credentials, firestore, auth
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 from datetime import datetime
 
 # Configure logging
@@ -135,6 +135,50 @@ def index():
         firebase_project_id=firebase_project_id,
         firebase_app_id=firebase_app_id
     )
+
+@app.route('/auth/firebase', methods=['POST'])
+def firebase_auth():
+    """Handle Firebase authentication sync with our server session"""
+    try:
+        firebase_uid = request.form.get('firebase_uid')
+        email = request.form.get('email')
+        name = request.form.get('name')
+        
+        if not firebase_uid or not email:
+            return jsonify({"error": "Missing required parameters"}), 400
+        
+        # Verify the Firebase user
+        try:
+            user = auth.get_user(firebase_uid)
+            
+            # Check if user info in Firestore
+            user_ref = db.collection('users').document(user.uid)
+            user_doc = user_ref.get()
+            
+            if not user_doc.exists:
+                # Create user in Firestore
+                user_ref.set({
+                    'name': name or user.display_name,
+                    'email': email,
+                    'created_at': firestore.SERVER_TIMESTAMP,
+                    'latest_burnout_score': None,
+                    'last_assessment': None
+                })
+            
+            # Set user session
+            session['user_id'] = user.uid
+            session['user_name'] = name or user.display_name
+            session['user_email'] = email
+            
+            return jsonify({"success": True, "redirect": url_for('dashboard')})
+            
+        except Exception as auth_error:
+            logging.error(f"Firebase auth verification error: {auth_error}")
+            return jsonify({"error": "Failed to verify user with Firebase"}), 401
+            
+    except Exception as e:
+        logging.error(f"Firebase auth error: {e}")
+        return jsonify({"error": "Authentication failed"}), 500
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():

@@ -96,14 +96,22 @@
                         data.append('firebase_uid', user.uid);
                         
                         // Submit to server
-                        fetch('{{ url_for("login") }}', {
+                        fetch('{{ url_for("firebase_auth") }}', {
                             method: 'POST',
                             body: data
                         })
-                        .then(response => {
-                            if (response.redirected) {
-                                window.location.href = response.url;
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success && data.redirect) {
+                                window.location.href = data.redirect;
+                            } else {
+                                console.error("Authentication error:", data.error);
+                                alert("Erro ao autenticar: " + (data.error || "Erro desconhecido"));
                             }
+                        })
+                        .catch(error => {
+                            console.error("Error during auth:", error);
+                            alert("Erro de conexão durante autenticação");
                         });
                     }).catch((error) => {
                         console.error("Error during Google sign-in:", error);
