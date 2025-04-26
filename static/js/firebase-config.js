@@ -45,7 +45,7 @@ function setupAuthListener() {
         data.append('name', user.displayName);
         data.append('firebase_uid', user.uid);
         
-        fetch('/auth/firebase', {
+        fetch('/auth/firebase-api', {
           method: 'POST',
           body: data
         })

@@ -115,7 +115,7 @@
                         data.append('google_auth', 'true');
                         
                         // Submit to server
-                        fetch('{{ url_for("firebase_auth") }}', {
+                        fetch('{{ url_for("auth_firebase") }}', {
                             method: 'POST',
                             body: data
                         })

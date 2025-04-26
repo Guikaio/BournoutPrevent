@@ -96,7 +96,7 @@
                         data.append('firebase_uid', user.uid);
                         
                         // Submit to server
-                        fetch('{{ url_for("firebase_auth") }}', {
+                        fetch('{{ url_for("auth_firebase") }}', {
                             method: 'POST',
                             body: data
                         })
