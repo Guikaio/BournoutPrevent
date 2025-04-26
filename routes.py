@@ -2,7 +2,7 @@ import os
 import json
 import logging
 import firebase_admin
-from firebase_admin import credentials, firestore, auth
+from firebase_admin import auth
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import render_template, request, redirect, url_for, flash, session, jsonify
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
@@ -10,32 +10,8 @@ from datetime import datetime
 from models import User, Response
 from create_app import db
 
-# Initialize Firebase
-firebase_db = None
-try:
-    firebase_project_id = os.environ.get("FIREBASE_PROJECT_ID")
-    
-    # Configure Firebase Admin SDK
-    firebase_config = {
-        'projectId': firebase_project_id,
-    }
-    
-    # Use service account if available in environment
-    cred_json = os.environ.get("FIREBASE_SERVICE_ACCOUNT")
-    if cred_json:
-        cred_dict = json.loads(cred_json)
-        cred = credentials.Certificate(cred_dict)
-    else:
-        # Use application default credentials if service account not provided
-        cred = credentials.ApplicationDefault()
-    
-    # Initialize Firebase with explicit project ID
-    firebase_admin.initialize_app(cred, firebase_config)
-    firebase_db = firestore.client()
-    logging.info("Firebase initialized successfully with project ID: %s", firebase_project_id)
-except Exception as e:
-    logging.error(f"Error initializing Firebase: {e}")
-    firebase_db = None
+# Configure logging
+logging.basicConfig(level=logging.DEBUG)
 
 # Helper functions
 def calculate_burnout_score(responses):
@@ -54,98 +30,134 @@ def is_authenticated():
     """Check if user is logged in via session"""
     return 'user_id' in session
 
-def get_user_data(firebase_uid):
-    """Retrieve user data from database"""
+def get_user_by_id(user_id):
+    """Retrieve a user by Firebase UID"""
     try:
-        # First try to get user from our PostgreSQL DB
-        user = User.query.filter_by(firebase_uid=firebase_uid).first()
-        if user:
-            return {
-                'name': user.name,
-                'email': user.email,
-                'latest_burnout_score': user.latest_burnout_score,
-                'last_assessment': user.last_assessment
-            }
+        if not db:
+            logging.error("Database connection not available")
+            return None
         
-        # If not in our DB and Firebase is available, try to get from Firebase
-        if firebase_db:
-            user_ref = firebase_db.collection('users').document(firebase_uid)
-            firebase_data = user_ref.get()
-            if firebase_data.exists:
-                return firebase_data.to_dict()
+        user_ref = db.collection('users').document(user_id)
+        user_doc = user_ref.get()
         
+        if not user_doc.exists:
+            return None
+            
+        return User.from_dict(user_id, user_doc.to_dict())
+    except Exception as e:
+        logging.error(f"Error retrieving user by ID: {e}")
         return None
+
+def get_user_by_email(email):
+    """Retrieve a user by email"""
+    try:
+        if not db:
+            logging.error("Database connection not available")
+            return None
+            
+        users_ref = db.collection('users').where('email', '==', email).limit(1)
+        users = list(users_ref.stream())
+        
+        if not users:
+            return None
+            
+        user_doc = users[0]
+        return User.from_dict(user_doc.id, user_doc.to_dict())
+    except Exception as e:
+        logging.error(f"Error retrieving user by email: {e}")
+        return None
+
+def create_user(firebase_uid, name, email):
+    """Create a new user in Firestore"""
+    try:
+        if not db:
+            logging.error("Database connection not available")
+            return None
+            
+        user_data = {
+            'name': name,
+            'email': email,
+            'created_at': datetime.now(),
+            'latest_burnout_score': None,
+            'last_assessment': None
+        }
+        
+        db.collection('users').document(firebase_uid).set(user_data)
+        return User.from_dict(firebase_uid, user_data)
+    except Exception as e:
+        logging.error(f"Error creating user: {e}")
+        return None
+
+def get_user_data(user_id):
+    """Retrieve user data from Firestore"""
+    try:
+        if not db:
+            logging.error("Database connection not available")
+            return None
+        
+        user_ref = db.collection('users').document(user_id)
+        user_doc = user_ref.get()
+        
+        if not user_doc.exists:
+            return None
+            
+        return user_doc.to_dict()
     except Exception as e:
         logging.error(f"Error retrieving user data: {e}")
         return None
 
-def save_questionnaire_responses(firebase_uid, responses, burnout_score):
-    """Save questionnaire responses to database"""
+def save_questionnaire_responses(user_id, responses, burnout_score):
+    """Save questionnaire responses to Firestore"""
     try:
-        # Get current timestamp
-        timestamp = datetime.now()
-        
-        # Get user from database
-        user = User.query.filter_by(firebase_uid=firebase_uid).first()
-        
-        if not user:
-            logging.error(f"User not found in database: {firebase_uid}")
+        if not db:
+            logging.error("Database connection not available")
             return False
         
-        # Create new response
-        new_response = Response(
-            user_id=user.id,
-            burnout_score=burnout_score,
-            timestamp=timestamp,
-            q1=responses.get('q1'),
-            q2=responses.get('q2'),
-            q3=responses.get('q3'),
-            q4=responses.get('q4'),
-            q5=responses.get('q5'),
-            q6=responses.get('q6'),
-            q7=responses.get('q7'),
-            q8=responses.get('q8'),
-            q9=responses.get('q9'),
-            q10=responses.get('q10'),
-            q11=responses.get('q11'),
-            q12=responses.get('q12'),
-            q13=responses.get('q13'),
-            q14=responses.get('q14'),
-            q15=responses.get('q15')
-        )
+        # Get timestamp
+        timestamp = datetime.now()
+        
+        # Add to responses collection
+        response_data = {
+            'user_id': user_id,
+            'burnout_score': burnout_score,
+            'timestamp': timestamp
+        }
+        
+        # Add individual question responses
+        for q, answer in responses.items():
+            response_data[q] = int(answer)
+        
+        # Add document to responses collection
+        db.collection('responses').add(response_data)
         
         # Update user's latest score
-        user.latest_burnout_score = burnout_score
-        user.last_assessment = timestamp
-        
-        # Add to database
-        db.session.add(new_response)
-        db.session.commit()
+        user_ref = db.collection('users').document(user_id)
+        user_ref.update({
+            'latest_burnout_score': burnout_score,
+            'last_assessment': timestamp
+        })
         
         return True
     except Exception as e:
-        db.session.rollback()
-        logging.error(f"Error saving questionnaire responses: {e}")
+        logging.error(f"Error saving responses: {e}")
         return False
 
-def get_burnout_history(firebase_uid):
+def get_burnout_history(user_id):
     """Get user's burnout history"""
     try:
-        # Get user from database
-        user = User.query.filter_by(firebase_uid=firebase_uid).first()
-        
-        if not user:
-            logging.error(f"User not found in database: {firebase_uid}")
+        if not db:
+            logging.error("Database connection not available")
             return []
         
-        # Get responses from database
-        responses = Response.query.filter_by(user_id=user.id).order_by(Response.timestamp).all()
+        responses_ref = db.collection('responses')
+        query = responses_ref.where('user_id', '==', user_id).order_by('timestamp')
         
         history = []
-        for response in responses:
+        for doc in query.stream():
+            data = doc.to_dict()
             history.append({
-                'score': response.burnout_score,
-                'timestamp': response.timestamp.strftime('%d/%m/%Y') if response.timestamp else 'Unknown'
+                'score': data.get('burnout_score'),
+                'timestamp': data.get('timestamp').strftime('%d/%m/%Y') if data.get('timestamp') else 'Unknown'
             })
         
         return history
@@ -161,8 +173,8 @@ def init_app(app):
     
     @login_manager.user_loader
     def load_user(user_id):
-        return User.query.get(int(user_id))
-        
+        return get_user_by_id(user_id)
+    
     # Routes
     @app.route('/')
     def index():
@@ -179,54 +191,6 @@ def init_app(app):
             firebase_project_id=firebase_project_id,
             firebase_app_id=firebase_app_id
         )
-    
-    @app.route('/auth/firebase-api', methods=['POST'])
-    def auth_firebase():
-        """Handle Firebase authentication sync with our server session"""
-        try:
-            firebase_uid = request.form.get('firebase_uid')
-            email = request.form.get('email')
-            name = request.form.get('name')
-            
-            if not firebase_uid or not email:
-                return jsonify({"error": "Missing required parameters"}), 400
-            
-            # Verify the Firebase user
-            try:
-                # Verify with Firebase Admin SDK
-                firebase_user = auth.get_user(firebase_uid)
-                
-                # Check if user exists in our DB
-                user = User.query.filter_by(firebase_uid=firebase_uid).first()
-                
-                if not user:
-                    # Create user in our DB
-                    user = User(
-                        firebase_uid=firebase_uid,
-                        name=name or firebase_user.display_name,
-                        email=email,
-                        created_at=datetime.now()
-                    )
-                    db.session.add(user)
-                    db.session.commit()
-                
-                # Log in the user
-                login_user(user)
-                
-                # Set user session for backward compatibility 
-                session['user_id'] = firebase_uid
-                session['user_name'] = name or firebase_user.display_name
-                session['user_email'] = email
-                
-                return jsonify({"success": True, "redirect": url_for('dashboard')})
-                
-            except Exception as auth_error:
-                logging.error(f"Firebase auth verification error: {auth_error}")
-                return jsonify({"error": "Failed to verify user with Firebase"}), 401
-                
-        except Exception as e:
-            logging.error(f"Firebase auth error: {e}")
-            return jsonify({"error": "Authentication failed"}), 500
     
     @app.route('/register', methods=['GET', 'POST'])
     def register():
@@ -247,6 +211,12 @@ def init_app(app):
                 return redirect(url_for('register'))
             
             try:
+                # Check if user already exists
+                existing_user = get_user_by_email(email)
+                if existing_user:
+                    flash('Este e-mail já está em uso.', 'error')
+                    return redirect(url_for('register'))
+                
                 # Create user in Firebase Auth
                 firebase_user = auth.create_user(
                     email=email,
@@ -254,21 +224,21 @@ def init_app(app):
                     display_name=name
                 )
                 
-                # Create user in our DB
-                user = User(
+                # Create user in Firestore
+                user = create_user(
                     firebase_uid=firebase_user.uid,
                     name=name,
-                    email=email,
-                    created_at=datetime.now()
+                    email=email
                 )
-                db.session.add(user)
-                db.session.commit()
+                
+                if not user:
+                    flash('Erro ao criar usuário. Tente novamente.', 'error')
+                    return redirect(url_for('register'))
                 
                 flash('Conta criada com sucesso! Por favor, faça login.', 'success')
                 return redirect(url_for('login'))
             
             except Exception as e:
-                db.session.rollback()
                 logging.error(f"Registration error: {e}")
                 flash('Erro ao criar conta. Este e-mail pode já estar em uso.', 'error')
         
@@ -297,37 +267,40 @@ def init_app(app):
                 return redirect(url_for('login'))
             
             try:
-                # Check if user exists in Firebase Auth
+                # For security reasons, we can't verify the password on the server side with Firebase Authentication
+                # Typically, this is done client-side with Firebase Authentication SDK
+                # For server-side email/password validation, we would need a different approach
+                
+                # Check if user exists
                 try:
                     firebase_user = auth.get_user_by_email(email)
                     
-                    # For demo purposes since we can't verify password on server side
-                    # In a real app, authentication should be done client-side with Firebase Authentication
-                    
-                    # Check if user exists in our DB
-                    user = User.query.filter_by(firebase_uid=firebase_user.uid).first()
+                    # Get user from Firestore
+                    user = get_user_by_id(firebase_user.uid)
                     
                     if not user:
-                        # Create user in our DB
-                        user = User(
+                        # Create user in Firestore if not exists (should not happen normally)
+                        user = create_user(
                             firebase_uid=firebase_user.uid,
-                            name=firebase_user.display_name,
-                            email=firebase_user.email,
-                            created_at=datetime.now()
+                            name=firebase_user.display_name or email.split('@')[0],  # Fallback to email username
+                            email=firebase_user.email
                         )
-                        db.session.add(user)
-                        db.session.commit()
                     
-                    # Log in the user with Flask-Login
+                    if not user:
+                        flash('Erro ao obter dados do usuário.', 'error')
+                        return redirect(url_for('login'))
+                    
+                    # Set up session
+                    session['user_id'] = user.id
+                    session['user_name'] = user.name
+                    session['user_email'] = user.email
+                    
+                    # Log in using Flask-Login
                     login_user(user)
-                    
-                    # Set user session for backward compatibility
-                    session['user_id'] = firebase_user.uid
-                    session['user_name'] = firebase_user.display_name
-                    session['user_email'] = firebase_user.email
                     
                     flash('Login realizado com sucesso!', 'success')
                     return redirect(url_for('dashboard'))
+                    
                 except Exception as auth_error:
                     logging.error(f"Authentication error: {auth_error}")
                     flash('Email ou senha inválidos', 'error')
@@ -346,7 +319,7 @@ def init_app(app):
     @app.route('/logout')
     def logout():
         logout_user()  # Flask-Login logout
-        session.clear()  # Clear session for complete logout
+        session.clear()  # Clear session
         flash('Você foi desconectado', 'info')
         return redirect(url_for('index'))
     

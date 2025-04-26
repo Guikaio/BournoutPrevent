@@ -38,14 +38,6 @@
                             <button type="submit" class="btn btn-primary btn-lg">
                                 <i class="fas fa-sign-in-alt me-2"></i>Entrar
                             </button>
-                            
-                            <div class="text-center my-3">
-                                <span class="text-muted">ou</span>
-                            </div>
-                            
-                            <button type="button" id="google-signin" class="btn btn-outline-primary btn-lg d-flex align-items-center justify-content-center">
-                                <i class="fab fa-google me-2"></i>Entrar com Google
-                            </button>
                         </div>
                     </form>
                     
@@ -77,48 +69,9 @@
         }
     });
     
-    // Firebase Auth - Initialize
+    // Initialize Firebase
     document.addEventListener('DOMContentLoaded', function() {
-        // Google Sign-in button
-        const googleSignInBtn = document.getElementById('google-signin');
-        if (googleSignInBtn) {
-            googleSignInBtn.addEventListener('click', function() {
-                const provider = new firebase.auth.GoogleAuthProvider();
-                firebase.auth().signInWithPopup(provider)
-                    .then((result) => {
-                        // User signed in
-                        const user = result.user;
-                        
-                        // Create form data for server-side authentication
-                        const data = new FormData();
-                        data.append('email', user.email);
-                        data.append('name', user.displayName);
-                        data.append('firebase_uid', user.uid);
-                        
-                        // Submit to server
-                        fetch('{{ url_for("auth_firebase") }}', {
-                            method: 'POST',
-                            body: data
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success && data.redirect) {
-                                window.location.href = data.redirect;
-                            } else {
-                                console.error("Authentication error:", data.error);
-                                alert("Erro ao autenticar: " + (data.error || "Erro desconhecido"));
-                            }
-                        })
-                        .catch(error => {
-                            console.error("Error during auth:", error);
-                            alert("Erro de conexão durante autenticação");
-                        });
-                    }).catch((error) => {
-                        console.error("Error during Google sign-in:", error);
-                        alert("Erro ao fazer login com Google. Por favor, tente novamente.");
-                    });
-            });
-        }
+        console.log("Firebase initialized");
     });
 </script>
 {% endblock %}
