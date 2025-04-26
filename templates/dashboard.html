@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex align-items-center justify-content-between">
+                <h1 class="mb-0">Dashboard</h1>
+                <a href="{{ url_for('questionnaire') }}" class="btn btn-primary">
+                    <i class="fas fa-clipboard-list me-2"></i>Nova Avaliação
+                </a>
+            </div>
+            <p class="text-secondary">Bem-vindo(a), {{ user_name }}! Acompanhe seu nível de burnout e histórico de avaliações.</p>
+        </div>
+    </div>
+    
+    {% if not has_completed_questionnaire %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>
+                <strong>Você ainda não completou nenhuma avaliação.</strong> 
+                Responda ao questionário para ver seus resultados aqui.
+            </div>
+        </div>
+    </div>
+    {% else %}
+    
+    <div class="row">
+        <!-- Current Burnout Level -->
+        <div class="col-lg-4 mb-4">
+            <div class="card dashboard-card">
+                <div class="card-body">
+                    <h3 class="card-title h5 mb-3">Nível de Burnout Atual</h3>
+                    
+                    <div class="chart-container mb-3">
+                        <canvas id="burnoutChart"></canvas>
+                    </div>
+                    
+                    <div class="text-center">
+                        {% if latest_score < 40 %}
+                        <span class="score-display score-low">{{ latest_score }}%</span>
+                        <p class="mb-0 text-success">Baixo risco de burnout</p>
+                        {% elif latest_score < 70 %}
+                        <span class="score-display score-medium">{{ latest_score }}%</span>
+                        <p class="mb-0 text-warning">Risco moderado de burnout</p>
+                        {% else %}
+                        <span class="score-display score-high">{{ latest_score }}%</span>
+                        <p class="mb-0 text-danger">Alto risco de burnout</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Burnout History -->
+        <div class="col-lg-8 mb-4">
+            <div class="card dashboard-card">
+                <div class="card-body">
+                    <h3 class="card-title h5 mb-3">Histórico de Avaliações</h3>
+                    
+                    <div class="chart-container">
+                        <canvas id="historyChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Tips and Medical Alert Section -->
+    <div class="row">
+        {% if latest_score >= 80 %}
+        <!-- Medical Alert for High Burnout -->
+        <div class="col-12 mb-4">
+            <div class="medical-alert">
+                <div class="d-flex align-items-center">
+                    <div class="medical-alert-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div>
+                        <h3 class="h4 mb-2">Alerta Médico - Atenção!</h3>
+                        <p class="mb-0">
+                            Seu nível de burnout está muito elevado ({{ latest_score }}%). Recomendamos fortemente que 
+                            procure ajuda profissional. Consulte um psicólogo ou psiquiatra para uma avaliação completa.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Quick Tips -->
+        <div class="col-12 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="card-title h5 mb-3">Dicas Rápidas</h3>
+                    
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="d-flex">
+                                <div class="me-3">
+                                    <i class="fas fa-bed fa-2x text-primary"></i>
+                                </div>
+                                <div>
+                                    <h4 class="h6">Priorize o Sono</h4>
+                                    <p class="small mb-0">Tente dormir 7-8 horas por noite regularmente.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="d-flex">
+                                <div class="me-3">
+                                    <i class="fas fa-walking fa-2x text-primary"></i>
+                                </div>
+                                <div>
+                                    <h4 class="h6">Exercício Físico</h4>
+                                    <p class="small mb-0">30 minutos diários podem reduzir significativamente o estresse.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="d-flex">
+                                <div class="me-3">
+                                    <i class="fas fa-clock fa-2x text-primary"></i>
+                                </div>
+                                <div>
+                                    <h4 class="h6">Faça Pausas</h4>
+                                    <p class="small mb-0">Intervalos regulares durante os estudos aumentam a produtividade.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-4">
+                        <a href="{{ url_for('tips') }}" class="btn btn-outline-primary">
+                            <i class="fas fa-lightbulb me-2"></i>Ver Todas as Dicas
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% if has_completed_questionnaire %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Create burnout gauge chart
+        createBurnoutScoreChart('burnoutChart', {{ latest_score }});
+        
+        // Create burnout history chart
+        const historyData = [
+            {% for entry in burnout_history %}
+            {
+                timestamp: "{{ entry.timestamp }}",
+                score: {{ entry.score }}
+            },
+            {% endfor %}
+        ];
+        createBurnoutHistoryChart('historyChart', historyData);
+    });
+</script>
+{% endif %}
+{% endblock %}

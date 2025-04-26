@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row align-items-center">
+        <div class="col-lg-6 order-lg-2">
+            <div class="text-center mb-4">
+                <svg class="img-fluid" width="400" height="300" viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Brain with stress bolts SVG -->
+                    <g fill="#3f63b4">
+                        <path d="M300,70 C200,70 120,150 120,250 C120,350 200,430 300,430 C400,430 480,350 480,250 C480,150 400,70 300,70 Z M300,90 C390,90 460,160 460,250 C460,340 390,410 300,410 C210,410 140,340 140,250 C140,160 210,90 300,90 Z" />
+                        <path d="M240,130 Q270,170 240,210 Q210,240 240,270 Q270,300 240,330 L260,350 Q310,300 290,250 Q270,200 290,150 L240,130 Z" />
+                        <path d="M360,130 Q330,170 360,210 Q390,240 360,270 Q330,300 360,330 L340,350 Q290,300 310,250 Q330,200 310,150 L360,130 Z" />
+                    </g>
+                    <!-- Lightning bolts -->
+                    <path d="M200,100 L170,150 L200,150 L160,210" stroke="#ffc107" stroke-width="5" fill="none" />
+                    <path d="M400,100 L430,150 L400,150 L440,210" stroke="#ffc107" stroke-width="5" fill="none" />
+                </svg>
+            </div>
+        </div>
+        <div class="col-lg-6 order-lg-1">
+            <div class="fade-in">
+                <h1 class="display-4 mb-4">Sistema Preventivo de Burnout</h1>
+                <h2 class="h3 mb-4 text-secondary">Para Estudantes Universitários</h2>
+                <p class="lead mb-4">
+                    O burnout acadêmico é uma condição caracterizada por exaustão emocional, 
+                    despersonalização e diminuição da realização pessoal devido a estressores 
+                    crônicos nos estudos.
+                </p>
+                <p class="mb-4">
+                    Nosso sistema ajuda a monitorar seus níveis de burnout, oferecendo dicas 
+                    personalizadas e alertas para prevenir o desenvolvimento da síndrome.
+                </p>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                    <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg px-4 me-md-2">
+                        <i class="fas fa-user-plus me-2"></i>Cadastre-se
+                    </a>
+                    <a href="{{ url_for('login') }}" class="btn btn-outline-secondary btn-lg px-4">
+                        <i class="fas fa-sign-in-alt me-2"></i>Login
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <hr class="my-5">
+    
+    <div class="row">
+        <div class="col-12 text-center mb-5">
+            <h2 class="display-6">Como o Sistema Funciona</h2>
+        </div>
+    </div>
+    
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card h-100 text-center">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <i class="fas fa-clipboard-list fa-3x text-primary"></i>
+                    </div>
+                    <h3 class="card-title h4">Avaliação</h3>
+                    <p class="card-text">
+                        Responda ao nosso questionário baseado no Inventário de Burnout de 
+                        Maslach (MBI) adaptado para estudantes universitários.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 text-center">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <i class="fas fa-chart-line fa-3x text-primary"></i>
+                    </div>
+                    <h3 class="card-title h4">Monitoramento</h3>
+                    <p class="card-text">
+                        Visualize seu nível de burnout no dashboard e acompanhe sua evolução 
+                        ao longo do tempo através de gráficos intuitivos.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 text-center">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <i class="fas fa-lightbulb fa-3x text-primary"></i>
+                    </div>
+                    <h3 class="card-title h4">Prevenção</h3>
+                    <p class="card-text">
+                        Receba dicas personalizadas para prevenir o burnout e alertas quando 
+                        seus níveis estiverem elevados, indicando a necessidade de ajuda profissional.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card bg-light text-dark p-4">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h4>Você sabia?</h4>
+                        <p class="mb-0">
+                            Segundo estudos, cerca de <strong>45% dos estudantes universitários</strong> 
+                            sofrem com algum nível de burnout durante a graduação. A prevenção e 
+                            o monitoramento constante são essenciais para evitar o agravamento 
+                            desta condição.
+                        </p>
+                    </div>
+                    <div class="col-md-4 text-center text-md-end mt-3 mt-md-0">
+                        <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg">
+                            Comece Agora
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

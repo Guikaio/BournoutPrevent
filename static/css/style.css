@@ -1,0 +1,189 @@
+/* Custom styles for Burnout Prevention System */
+
+/* Global styles */
+:root {
+  --bs-primary: #3f63b4;
+  --bs-secondary: #6c757d;
+  --bs-success: #28a745;
+  --bs-danger: #dc3545;
+  --bs-warning: #ffc107;
+  --bs-info: #17a2b8;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
+}
+
+/* Responsive font sizes */
+h1 {
+  font-size: calc(1.75rem + 1.5vw);
+}
+
+h2 {
+  font-size: calc(1.5rem + 1vw);
+}
+
+h3 {
+  font-size: calc(1.25rem + 0.5vw);
+}
+
+/* Navbar styling */
+.navbar-brand {
+  font-weight: bold;
+}
+
+/* Card styling */
+.card {
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.5rem;
+  transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+/* Login and registration forms */
+.auth-container {
+  max-width: 450px;
+  margin: 2rem auto;
+}
+
+/* Questionnaire styling */
+.question-card {
+  margin-bottom: 1.5rem;
+}
+
+.question-text {
+  font-weight: 500;
+  margin-bottom: 1rem;
+}
+
+/* Dashboard styling */
+.dashboard-card {
+  height: 100%;
+}
+
+.score-display {
+  font-size: 3rem;
+  font-weight: bold;
+}
+
+.chart-container {
+  position: relative;
+  height: 300px;
+  width: 100%;
+}
+
+/* Alert levels for burnout scores */
+.score-low {
+  color: var(--bs-success);
+}
+
+.score-medium {
+  color: var(--bs-warning);
+}
+
+.score-high {
+  color: var(--bs-danger);
+}
+
+/* Tips page styling */
+.tip-card {
+  height: 100%;
+  transition: all 0.2s ease;
+}
+
+.tip-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+.tip-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+/* Media queries for responsive design */
+@media (max-width: 767.98px) {
+  /* Smaller padding on mobile */
+  .container {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  
+  /* Adjust form elements for mobile */
+  .form-control, .btn {
+    font-size: 1rem;
+    padding: 0.5rem 0.75rem;
+  }
+  
+  /* Smaller charts on mobile */
+  .chart-container {
+    height: 250px;
+  }
+  
+  /* Stack cards on mobile */
+  .card-deck {
+    display: block;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 991.98px) {
+  /* Adjustments for tablets */
+  .chart-container {
+    height: 275px;
+  }
+}
+
+/* Medical alert styling */
+.medical-alert {
+  background-color: var(--bs-danger);
+  color: white;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.medical-alert-icon {
+  font-size: 2rem;
+  margin-right: 1rem;
+}
+
+/* Custom checkbox and radio styling for better mobile touch */
+.custom-control {
+  padding-left: 2rem;
+}
+
+.custom-control-input {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.custom-control-label {
+  padding-top: 0.125rem;
+}
+
+/* Animations */
+.fade-in {
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Footer styling */
+footer {
+  margin-top: auto;
+  padding: 1.5rem 0;
+  background-color: var(--bs-light);
+}
