@@ -15,9 +15,54 @@ function initializeFirebase(apiKey, projectId, appId) {
   };
 
   // Initialize Firebase
-  firebase.initializeApp(firebaseConfig);
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
   
   console.log("Firebase initialized successfully");
+  
+  // Set up auth state listener
+  setupAuthListener();
+}
+
+/**
+ * Set up authentication state listener
+ */
+function setupAuthListener() {
+  firebase.auth().onAuthStateChanged((user) => {
+    updateNavigation(user);
+    
+    if (user) {
+      // User is signed in
+      console.log("User is signed in:", user.displayName);
+      
+      // Check if we're on login or register page and need to redirect
+      const currentPage = window.location.pathname;
+      if (currentPage.includes('/login') || currentPage.includes('/register')) {
+        // Create session on server side
+        const data = new FormData();
+        data.append('email', user.email);
+        data.append('name', user.displayName);
+        data.append('firebase_uid', user.uid);
+        
+        fetch('/login', {
+          method: 'POST',
+          body: data
+        })
+        .then(response => {
+          if (response.redirected) {
+            window.location.href = response.url;
+          }
+        })
+        .catch(error => {
+          console.error("Error syncing auth state with server:", error);
+        });
+      }
+    } else {
+      // User is signed out
+      console.log("User is signed out");
+    }
+  });
 }
 
 /**
@@ -50,11 +95,23 @@ function loginUser(email, password) {
 }
 
 /**
+ * Sign in with Google
+ * @returns {Promise} - Firebase auth promise
+ */
+function signInWithGoogle() {
+  const provider = new firebase.auth.GoogleAuthProvider();
+  return firebase.auth().signInWithPopup(provider);
+}
+
+/**
  * Logout the current user
  * @returns {Promise} - Firebase auth promise
  */
 function logoutUser() {
-  return firebase.auth().signOut();
+  return firebase.auth().signOut().then(() => {
+    // After signing out from Firebase, sign out from the server session
+    window.location.href = '/logout';
+  });
 }
 
 /**
@@ -77,10 +134,58 @@ function onAuthStateChanged(callback) {
 // Listen for authentication changes and update UI
 document.addEventListener('DOMContentLoaded', function() {
   // Check if Firebase is defined
-  if (typeof firebase !== 'undefined') {
-    onAuthStateChanged((user) => {
-      updateNavigation(user);
-    });
+  if (typeof firebase !== 'undefined' && firebase.apps.length > 0) {
+    // Setup logout button
+    const logoutBtn = document.getElementById('logout-button');
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        logoutUser();
+      });
+    }
+    
+    // Setup email/password login form
+    const loginForm = document.getElementById('login-form');
+    if (loginForm) {
+      loginForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        if (!validateLoginForm()) {
+          return;
+        }
+        
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        
+        loginUser(email, password)
+          .catch(error => {
+            console.error("Login error:", error);
+            alert("Erro ao fazer login: " + error.message);
+          });
+      });
+    }
+    
+    // Setup registration form
+    const registrationForm = document.getElementById('registration-form');
+    if (registrationForm) {
+      registrationForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        if (!validateRegistrationForm()) {
+          return;
+        }
+        
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        
+        registerUser(email, password, name)
+          .catch(error => {
+            console.error("Registration error:", error);
+            alert("Erro ao criar conta: " + error.message);
+          });
+      });
+    }
   }
 });
 

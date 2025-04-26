@@ -16,6 +16,13 @@ app.secret_key = os.environ.get("SESSION_SECRET", "burnout-prevention-secret-key
 
 # Initialize Firebase
 try:
+    firebase_project_id = os.environ.get("FIREBASE_PROJECT_ID")
+    
+    # Configure Firebase Admin SDK
+    firebase_config = {
+        'projectId': firebase_project_id,
+    }
+    
     # Use service account if available in environment
     cred_json = os.environ.get("FIREBASE_SERVICE_ACCOUNT")
     if cred_json:
@@ -25,9 +32,10 @@ try:
         # Use application default credentials if service account not provided
         cred = credentials.ApplicationDefault()
     
-    firebase_admin.initialize_app(cred)
+    # Initialize Firebase with explicit project ID
+    firebase_admin.initialize_app(cred, firebase_config)
     db = firestore.client()
-    logging.info("Firebase initialized successfully")
+    logging.info("Firebase initialized successfully with project ID: %s", firebase_project_id)
 except Exception as e:
     logging.error(f"Error initializing Firebase: {e}")
     db = None
@@ -133,6 +141,10 @@ def register():
     if is_authenticated():
         return redirect(url_for('dashboard'))
     
+    firebase_api_key = os.environ.get("FIREBASE_API_KEY", "")
+    firebase_project_id = os.environ.get("FIREBASE_PROJECT_ID", "")
+    firebase_app_id = os.environ.get("FIREBASE_APP_ID", "")
+    
     if request.method == 'POST':
         email = request.form.get('email')
         password = request.form.get('password')
@@ -151,13 +163,16 @@ def register():
             )
             
             # Store additional user info in Firestore
-            db.collection('users').document(user.uid).set({
-                'name': name,
-                'email': email,
-                'created_at': firestore.SERVER_TIMESTAMP,
-                'latest_burnout_score': None,
-                'last_assessment': None
-            })
+            if db:
+                db.collection('users').document(user.uid).set({
+                    'name': name,
+                    'email': email,
+                    'created_at': firestore.SERVER_TIMESTAMP,
+                    'latest_burnout_score': None,
+                    'last_assessment': None
+                })
+            else:
+                logging.error("Cannot save user data to Firestore as db is None")
             
             flash('Conta criada com sucesso! Por favor, faça login.', 'success')
             return redirect(url_for('login'))
@@ -166,12 +181,21 @@ def register():
             logging.error(f"Registration error: {e}")
             flash('Erro ao criar conta. Este e-mail pode já estar em uso.', 'error')
     
-    return render_template('register.html')
+    return render_template(
+        'register.html',
+        firebase_api_key=firebase_api_key,
+        firebase_project_id=firebase_project_id,
+        firebase_app_id=firebase_app_id
+    )
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if is_authenticated():
         return redirect(url_for('dashboard'))
+    
+    firebase_api_key = os.environ.get("FIREBASE_API_KEY", "")
+    firebase_project_id = os.environ.get("FIREBASE_PROJECT_ID", "")
+    firebase_app_id = os.environ.get("FIREBASE_APP_ID", "")
     
     if request.method == 'POST':
         email = request.form.get('email')
@@ -182,26 +206,34 @@ def login():
             return redirect(url_for('login'))
         
         try:
-            # Sign in user with Firebase Auth
-            user = auth.get_user_by_email(email)
-            
-            # Note: We can't verify password here as Firebase Auth handles this
-            # This is a simplified login flow for demonstration
-            # In a real app, you would use Firebase client SDK for authentication
-            
-            # Set user session
-            session['user_id'] = user.uid
-            session['user_name'] = user.display_name
-            session['user_email'] = user.email
-            
-            flash('Login realizado com sucesso!', 'success')
-            return redirect(url_for('dashboard'))
+            # Check if user exists in Firebase Auth
+            try:
+                user = auth.get_user_by_email(email)
+                
+                # For demo purposes since we can't verify password on server side
+                # In a real app, authentication should be done client-side with Firebase Authentication
+                
+                # Set user session
+                session['user_id'] = user.uid
+                session['user_name'] = user.display_name
+                session['user_email'] = user.email
+                
+                flash('Login realizado com sucesso!', 'success')
+                return redirect(url_for('dashboard'))
+            except Exception as auth_error:
+                logging.error(f"Authentication error: {auth_error}")
+                flash('Email ou senha inválidos', 'error')
         
         except Exception as e:
             logging.error(f"Login error: {e}")
-            flash('Email ou senha inválidos', 'error')
+            flash('Ocorreu um erro durante o login. Tente novamente.', 'error')
     
-    return render_template('login.html')
+    return render_template(
+        'login.html',
+        firebase_api_key=firebase_api_key,
+        firebase_project_id=firebase_project_id,
+        firebase_app_id=firebase_app_id
+    )
 
 @app.route('/logout')
 def logout():

@@ -53,9 +53,17 @@
                             <div class="invalid-feedback"></div>
                         </div>
                         
-                        <div class="d-grid">
+                        <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary btn-lg">
                                 <i class="fas fa-user-plus me-2"></i>Criar Conta
+                            </button>
+                            
+                            <div class="text-center my-3">
+                                <span class="text-muted">ou</span>
+                            </div>
+                            
+                            <button type="button" id="google-signup" class="btn btn-outline-primary btn-lg d-flex align-items-center justify-content-center">
+                                <i class="fab fa-google me-2"></i>Cadastrar com Google
                             </button>
                         </div>
                     </form>
@@ -85,6 +93,42 @@
             passwordInput.type = 'password';
             icon.classList.remove('fa-eye-slash');
             icon.classList.add('fa-eye');
+        }
+    });
+    
+    // Firebase Auth - Register with Google
+    document.addEventListener('DOMContentLoaded', function() {
+        const googleSignUpBtn = document.getElementById('google-signup');
+        if (googleSignUpBtn) {
+            googleSignUpBtn.addEventListener('click', function() {
+                const provider = new firebase.auth.GoogleAuthProvider();
+                firebase.auth().signInWithPopup(provider)
+                    .then((result) => {
+                        // User signed in with Google
+                        const user = result.user;
+                        
+                        // Create form data for server-side registration
+                        const data = new FormData();
+                        data.append('email', user.email);
+                        data.append('name', user.displayName);
+                        data.append('firebase_uid', user.uid);
+                        data.append('google_auth', 'true');
+                        
+                        // Submit to server
+                        fetch('{{ url_for("register") }}', {
+                            method: 'POST',
+                            body: data
+                        })
+                        .then(response => {
+                            if (response.redirected) {
+                                window.location.href = response.url;
+                            }
+                        });
+                    }).catch((error) => {
+                        console.error("Error during Google sign-up:", error);
+                        alert("Erro ao cadastrar com Google. Por favor, tente novamente.");
+                    });
+            });
         }
     });
 </script>
