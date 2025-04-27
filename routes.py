@@ -13,15 +13,91 @@ logging.basicConfig(level=logging.DEBUG)
 # Helper functions
 def calculate_burnout_score(responses):
     """
-    Calculate burnout score from questionnaire responses.
-    Questions 5-15 are used for burnout calculation.
-    """
-    burnout_questions = [f"q{i}" for i in range(5, 16)]
-    total_score = sum(int(responses.get(q, 0)) for q in burnout_questions)
-    max_possible = 4 * len(burnout_questions)  # max score is 4 per question
-    burnout_percentage = (total_score / max_possible) * 100
+    Calculate burnout score based on the Maslach Burnout Inventory (MBI).
     
-    return round(burnout_percentage, 1)
+    This implementation uses a modified approach for students:
+    - Emotional Exhaustion (EE): Questions 5-9
+    - Depersonalization/Cynicism (DP): Questions 10-13
+    - Personal Accomplishment (PA): Questions 14-15 (reverse scored)
+    
+    The burnout score is calculated as: (EE + DP + (20 - PA)) / total_max_score * 100
+    """
+    try:
+        # Emotional Exhaustion (EE) - Questions 5-9
+        ee_questions = [f"q{i}" for i in range(5, 10)]
+        ee_score = 0
+        for q in ee_questions:
+            if q in responses and responses[q].isdigit():
+                ee_score += int(responses[q])
+            
+        # Depersonalization/Cynicism (DP) - Questions 10-13
+        dp_questions = [f"q{i}" for i in range(10, 14)]
+        dp_score = 0
+        for q in dp_questions:
+            if q in responses and responses[q].isdigit():
+                dp_score += int(responses[q])
+            
+        # Personal Accomplishment (PA) - Questions 14-15 (reverse scored)
+        pa_questions = [f"q{i}" for i in range(14, 16)]
+        pa_score = 0
+        for q in pa_questions:
+            if q in responses and responses[q].isdigit():
+                # PA is reverse scored (higher is better)
+                pa_score += int(responses[q])
+        
+        # Reverse PA score (higher PA means lower burnout)
+        max_pa_score = 4 * len(pa_questions)  # 4 is max per question
+        reversed_pa_score = max_pa_score - pa_score
+        
+        # Calculate total score
+        total_score = ee_score + dp_score + reversed_pa_score
+        
+        # Calculate max possible score
+        total_questions = len(ee_questions) + len(dp_questions) + len(pa_questions)
+        max_possible = 4 * total_questions  # Max score is 4 per question
+        
+        # Calculate burnout percentage
+        burnout_percentage = (total_score / max_possible) * 100
+        
+        # Additional factors from lifestyle questions (q16-q25)
+        # These adjust the score slightly based on lifestyle factors
+        lifestyle_adjustment = 0
+        
+        # Sleep patterns (q18) - less sleep increases burnout risk
+        if "q18" in responses:
+            sleep_response = responses.get("q18")
+            if sleep_response == "Menos de 5 horas":
+                lifestyle_adjustment += 5
+            elif sleep_response == "5-6 horas":
+                lifestyle_adjustment += 2.5
+                
+        # Physical activity (q19) - less activity increases burnout risk
+        if "q19" in responses:
+            activity_response = responses.get("q19")
+            if activity_response == "Raramente ou nunca":
+                lifestyle_adjustment += 5
+            elif activity_response == "1-2 vezes por semana":
+                lifestyle_adjustment += 2.5
+                
+        # Social support (q20) - less support increases burnout risk
+        if "q20" in responses:
+            support_response = responses.get("q20")
+            if support_response == "Nenhum apoio":
+                lifestyle_adjustment += 5
+            elif support_response == "Pouco apoio":
+                lifestyle_adjustment += 2.5
+                
+        # Apply lifestyle adjustment (capped at 15%)
+        lifestyle_adjustment = min(lifestyle_adjustment, 15)
+        
+        # Apply adjustment but ensure score stays in 0-100 range
+        adjusted_score = min(100, burnout_percentage + lifestyle_adjustment)
+        
+        return round(adjusted_score, 1)
+    except Exception as e:
+        logging.error(f"Error calculating burnout score: {e}")
+        # Return a default moderate score if calculation fails
+        return 50.0
 
 def is_authenticated():
     """Check if user is logged in via session"""
@@ -67,7 +143,15 @@ def save_questionnaire_responses(user_id, responses, burnout_score):
         # Add individual question responses
         for q, answer in responses.items():
             if hasattr(new_response, q):  # Check if question field exists
-                setattr(new_response, q, int(answer))
+                # Handle numeric responses (for burnout calculation questions)
+                if q in [f"q{i}" for i in range(5, 16)] and answer.isdigit():
+                    setattr(new_response, q, int(answer))
+                # Handle demographic and lifestyle questions with string values
+                elif q in [f"q{i}" for i in range(1, 5)] or q in [f"q{i}" for i in range(16, 26)]:
+                    # Store value 1 to indicate response was provided
+                    # Actual text responses are used in the burnout calculation 
+                    # but don't need to be stored in the integer fields
+                    setattr(new_response, q, 1)
         
         # Update user's latest score
         user.latest_burnout_score = burnout_score

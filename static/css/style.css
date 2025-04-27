@@ -224,3 +224,27 @@ footer {
   padding: 1.5rem 0;
   background-color: var(--bs-light);
 }
+
+/* Resources list styling */
+.resource-list {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.resource-item {
+  background-color: rgba(25, 30, 45, 0.8) !important;
+  color: #e9ecef !important;
+  border: 1px solid rgba(60, 65, 85, 0.8) !important;
+  transition: all 0.2s ease;
+}
+
+.resource-item:hover {
+  background-color: rgba(35, 40, 55, 0.9) !important;
+  transform: translateY(-2px);
+}
+
+/* List group styling */
+.list-group-item {
+  background-color: rgba(25, 30, 45, 0.8);
+  color: #e9ecef;
+  border-color: rgba(60, 65, 85, 0.8);
+}
