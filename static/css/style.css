@@ -44,10 +44,18 @@ h3 {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   margin-bottom: 1.5rem;
   transition: transform 0.2s ease-in-out;
+  background-color: rgba(25, 30, 45, 0.8);
+  color: #e9ecef;
 }
 
 .card:hover {
   transform: translateY(-5px);
+}
+
+.card-header {
+  background-color: rgba(40, 45, 65, 0.8) !important;
+  color: #e9ecef;
+  border-bottom: 1px solid rgba(60, 65, 85, 0.8);
 }
 
 /* Login and registration forms */
@@ -64,6 +72,35 @@ h3 {
 .question-text {
   font-weight: 500;
   margin-bottom: 1rem;
+}
+
+.form-check {
+  color: #e9ecef;
+}
+
+.form-check-input:checked {
+  background-color: var(--bs-primary);
+  border-color: var(--bs-primary);
+}
+
+/* Formulários em modo escuro */
+.form-control {
+  background-color: rgba(30, 35, 50, 0.8);
+  border-color: rgba(60, 65, 85, 0.8);
+  color: #e9ecef;
+}
+
+.form-control:focus {
+  background-color: rgba(35, 40, 55, 0.8);
+  color: #fff;
+  border-color: var(--bs-primary);
+  box-shadow: 0 0 0 0.2rem rgba(63, 99, 180, 0.25);
+}
+
+.form-select {
+  background-color: rgba(30, 35, 50, 0.8);
+  border-color: rgba(60, 65, 85, 0.8);
+  color: #e9ecef;
 }
 
 /* Dashboard styling */
