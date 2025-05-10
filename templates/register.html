@@ -72,7 +72,7 @@
 
 {% block scripts %}
 <script>
-    // Toggle password visibility
+    // Alterna a visibilidade da senha
     document.getElementById('toggle-password').addEventListener('click', function() {
         const passwordInput = document.getElementById('password');
         const icon = this.querySelector('i');
@@ -88,12 +88,12 @@
         }
     });
     
-    // Form validation
+    // Validação do formulário
     document.addEventListener('DOMContentLoaded', function() {
         const registrationForm = document.getElementById('registration-form');
         if (registrationForm) {
             registrationForm.addEventListener('submit', function(e) {
-                // Validate form before submission
+                // Valida o formulário antes do envio
                 const name = document.getElementById('name').value.trim();
                 const email = document.getElementById('email').value.trim();
                 const password = document.getElementById('password').value;
@@ -101,7 +101,7 @@
                 
                 let isValid = true;
                 
-                // Validate name
+                // Valida nome
                 if (!name) {
                     showError(document.getElementById('name'), 'O nome é obrigatório');
                     isValid = false;
@@ -109,7 +109,7 @@
                     clearError(document.getElementById('name'));
                 }
                 
-                // Validate email
+                // Valida email
                 if (!email) {
                     showError(document.getElementById('email'), 'O e-mail é obrigatório');
                     isValid = false;
@@ -120,7 +120,7 @@
                     clearError(document.getElementById('email'));
                 }
                 
-                // Validate password
+                // Valida senha
                 if (!password) {
                     showError(document.getElementById('password'), 'A senha é obrigatória');
                     isValid = false;
@@ -131,7 +131,7 @@
                     clearError(document.getElementById('password'));
                 }
                 
-                // Validate password confirmation
+                // Valida confirmação de senha
                 if (password !== confirmPassword) {
                     showError(document.getElementById('confirm-password'), 'As senhas não coincidem');
                     isValid = false;
@@ -146,12 +146,13 @@
         }
     });
     
-    // Validation helpers
+    // Função auxiliar para validar email
     function isValidEmail(email) {
         const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return re.test(email);
     }
     
+    // Exibe mensagem de erro
     function showError(inputElement, message) {
         const feedback = inputElement.parentElement.nextElementSibling;
         feedback.textContent = message;
@@ -159,6 +160,7 @@
         inputElement.classList.add('is-invalid');
     }
     
+    // Remove mensagem de erro
     function clearError(inputElement) {
         const feedback = inputElement.parentElement.nextElementSibling;
         feedback.textContent = '';

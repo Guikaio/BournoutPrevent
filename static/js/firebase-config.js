@@ -1,45 +1,45 @@
 /**
- * Firebase configuration for the Burnout Prevention System
- * This file initializes Firebase and provides authentication functions
+ * Configuração do Firebase para o Sistema de Prevenção de Burnout
+ * Este arquivo inicializa o Firebase e fornece funções de autenticação
  */
 
-// Initialize Firebase with provided configuration
+// Inicializa o Firebase com a configuração fornecida
 function initializeFirebase(apiKey, projectId, appId) {
   const firebaseConfig = {
     apiKey: apiKey,
     authDomain: `${projectId}.firebaseapp.com`,
     projectId: projectId,
     storageBucket: `${projectId}.appspot.com`,
-    messagingSenderId: "123456789012", // This is a placeholder as we don't need messaging
+    messagingSenderId: "123456789012", // Este é um valor fictício pois não usamos mensagens
     appId: appId
   };
 
-  // Initialize Firebase
+  // Inicializa o Firebase
   if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
   }
   
-  console.log("Firebase initialized successfully");
+  console.log("Firebase inicializado com sucesso");
   
-  // Set up auth state listener
+  // Configura o ouvinte de estado de autenticação
   setupAuthListener();
 }
 
 /**
- * Set up authentication state listener
+ * Configura o ouvinte de estado de autenticação
  */
 function setupAuthListener() {
   firebase.auth().onAuthStateChanged((user) => {
     updateNavigation(user);
     
     if (user) {
-      // User is signed in
-      console.log("User is signed in:", user.displayName);
+      // Usuário está autenticado
+      console.log("Usuário autenticado:", user.displayName);
       
-      // Check if we're on login or register page and need to redirect
+      // Verifica se está na página de login ou cadastro e precisa redirecionar
       const currentPage = window.location.pathname;
       if (currentPage.includes('/login') || currentPage.includes('/register')) {
-        // Create session on server side
+        // Cria sessão no servidor
         const data = new FormData();
         data.append('email', user.email);
         data.append('name', user.displayName);
@@ -54,31 +54,31 @@ function setupAuthListener() {
           if (data.success && data.redirect) {
             window.location.href = data.redirect;
           } else {
-            console.error("Auth sync error:", data.error);
+            console.error("Erro ao sincronizar autenticação:", data.error);
           }
         })
         .catch(error => {
-          console.error("Error syncing auth state with server:", error);
+          console.error("Erro ao sincronizar estado de autenticação com o servidor:", error);
         });
       }
     } else {
-      // User is signed out
-      console.log("User is signed out");
+      // Usuário não está autenticado
+      console.log("Usuário não está autenticado");
     }
   });
 }
 
 /**
- * Register a new user with email and password
- * @param {string} email - User's email
- * @param {string} password - User's password
- * @param {string} name - User's name
- * @returns {Promise} - Firebase auth promise
+ * Registra um novo usuário com e-mail e senha
+ * @param {string} email - E-mail do usuário
+ * @param {string} password - Senha do usuário
+ * @param {string} name - Nome do usuário
+ * @returns {Promise} - Promessa de autenticação do Firebase
  */
 function registerUser(email, password, name) {
   return firebase.auth().createUserWithEmailAndPassword(email, password)
     .then((userCredential) => {
-      // Update profile to add display name
+      // Atualiza o perfil para adicionar o nome
       return userCredential.user.updateProfile({
         displayName: name
       }).then(() => {
@@ -88,18 +88,18 @@ function registerUser(email, password, name) {
 }
 
 /**
- * Login a user with email and password
- * @param {string} email - User's email
- * @param {string} password - User's password
- * @returns {Promise} - Firebase auth promise
+ * Faz login de um usuário com e-mail e senha
+ * @param {string} email - E-mail do usuário
+ * @param {string} password - Senha do usuário
+ * @returns {Promise} - Promessa de autenticação do Firebase
  */
 function loginUser(email, password) {
   return firebase.auth().signInWithEmailAndPassword(email, password);
 }
 
 /**
- * Sign in with Google
- * @returns {Promise} - Firebase auth promise
+ * Faz login com Google
+ * @returns {Promise} - Promessa de autenticação do Firebase
  */
 function signInWithGoogle() {
   const provider = new firebase.auth.GoogleAuthProvider();
@@ -107,38 +107,38 @@ function signInWithGoogle() {
 }
 
 /**
- * Logout the current user
- * @returns {Promise} - Firebase auth promise
+ * Faz logout do usuário atual
+ * @returns {Promise} - Promessa de autenticação do Firebase
  */
 function logoutUser() {
   return firebase.auth().signOut().then(() => {
-    // After signing out from Firebase, sign out from the server session
+    // Após sair do Firebase, sai da sessão do servidor
     window.location.href = '/logout';
   });
 }
 
 /**
- * Get the current authenticated user
- * @returns {Object|null} - Firebase user object or null if not authenticated
+ * Obtém o usuário autenticado atual
+ * @returns {Object|null} - Objeto do usuário Firebase ou null se não autenticado
  */
 function getCurrentUser() {
   return firebase.auth().currentUser;
 }
 
 /**
- * Listen for auth state changes
- * @param {Function} callback - Callback function that receives the user object
- * @returns {Function} - Unsubscribe function
+ * Ouve mudanças no estado de autenticação
+ * @param {Function} callback - Função de callback que recebe o objeto do usuário
+ * @returns {Function} - Função para cancelar a escuta
  */
 function onAuthStateChanged(callback) {
   return firebase.auth().onAuthStateChanged(callback);
 }
 
-// Listen for authentication changes and update UI
+// Escuta por mudanças de autenticação e atualiza a interface
 document.addEventListener('DOMContentLoaded', function() {
-  // Check if Firebase is defined
+  // Verifica se o Firebase está definido
   if (typeof firebase !== 'undefined' && firebase.apps.length > 0) {
-    // Setup logout button
+    // Configura o botão de logout
     const logoutBtn = document.getElementById('logout-button');
     if (logoutBtn) {
       logoutBtn.addEventListener('click', function(e) {
@@ -147,7 +147,7 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     }
     
-    // Setup email/password login form
+    // Configura o formulário de login com e-mail e senha
     const loginForm = document.getElementById('login-form');
     if (loginForm) {
       loginForm.addEventListener('submit', function(e) {
@@ -162,13 +162,13 @@ document.addEventListener('DOMContentLoaded', function() {
         
         loginUser(email, password)
           .catch(error => {
-            console.error("Login error:", error);
+            console.error("Erro no login:", error);
             alert("Erro ao fazer login: " + error.message);
           });
       });
     }
     
-    // Setup registration form
+    // Configura o formulário de cadastro
     const registrationForm = document.getElementById('registration-form');
     if (registrationForm) {
       registrationForm.addEventListener('submit', function(e) {
@@ -184,7 +184,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         registerUser(email, password, name)
           .catch(error => {
-            console.error("Registration error:", error);
+            console.error("Erro no cadastro:", error);
             alert("Erro ao criar conta: " + error.message);
           });
       });
@@ -193,25 +193,25 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 /**
- * Update navigation based on authentication state
- * @param {Object|null} user - Firebase user object or null
+ * Atualiza a navegação com base no estado de autenticação
+ * @param {Object|null} user - Objeto do usuário Firebase ou null
  */
 function updateNavigation(user) {
   const authNavItems = document.querySelectorAll('.auth-nav-item');
   const unauthNavItems = document.querySelectorAll('.unauth-nav-item');
   
   if (user) {
-    // User is signed in
+    // Usuário autenticado
     authNavItems.forEach(item => item.style.display = 'block');
     unauthNavItems.forEach(item => item.style.display = 'none');
     
-    // Update user display name if available
+    // Atualiza o nome do usuário se estiver disponível
     const userNameElement = document.getElementById('user-name');
     if (userNameElement && user.displayName) {
       userNameElement.textContent = user.displayName;
     }
   } else {
-    // User is signed out
+    // Usuário não autenticado
     authNavItems.forEach(item => item.style.display = 'none');
     unauthNavItems.forEach(item => item.style.display = 'block');
   }

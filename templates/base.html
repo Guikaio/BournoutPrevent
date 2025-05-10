@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema Preventivo de Burnout para Estudantes</title>
     
-    <!-- Bootstrap CSS -->
+    <!-- CSS do Bootstrap -->
     <link href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css" rel="stylesheet">
     
     <!-- Font Awesome -->
@@ -14,19 +14,19 @@
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
     
-    <!-- Custom CSS -->
+    <!-- CSS Personalizado -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     
-    <!-- Removed Firebase SDK references -->
+    <!-- SDK do Firebase removido -->
 </head>
 <body>
-    <!-- Navbar -->
+    <!-- Barra de navegação -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
             <a class="navbar-brand" href="{{ url_for('index') }}">
                 <i class="fas fa-brain me-2"></i>Burnout Prevention
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Alternar navegação">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
@@ -72,26 +72,26 @@
         </div>
     </nav>
     
-    <!-- Flash Messages -->
+    <!-- Mensagens Flash -->
     <div class="container mt-3">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
                     <div class="alert alert-{{ category if category != 'error' else 'danger' }} alert-dismissible fade show" role="alert">
                         {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
                     </div>
                 {% endfor %}
             {% endif %}
         {% endwith %}
     </div>
     
-    <!-- Main Content -->
+    <!-- Conteúdo principal -->
     <main class="py-4">
         {% block content %}{% endblock %}
     </main>
     
-    <!-- Footer -->
+    <!-- Rodapé -->
     <footer class="bg-dark text-light py-4">
         <div class="container">
             <div class="row">
@@ -123,16 +123,16 @@
         </div>
     </footer>
     
-    <!-- Bootstrap JS Bundle -->
+    <!-- Script Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
-    <!-- Custom Scripts -->
+    <!-- Scripts personalizados -->
     <script src="{{ url_for('static', filename='js/chart-config.js') }}"></script>
     <script src="{{ url_for('static', filename='js/form-validation.js') }}"></script>
     
-    <!-- Custom Scripts -->
+    <!-- Scripts personalizados -->
     <script>
-        // Logout button functionality
+        // Funcionalidade do botão de logout
         document.addEventListener('DOMContentLoaded', function() {
             const logoutBtn = document.getElementById('logout-button');
             if (logoutBtn) {
@@ -144,7 +144,7 @@
         });
     </script>
     
-    <!-- Page-specific scripts -->
+    <!-- Scripts específicos da página -->
     {% block scripts %}{% endblock %}
 </body>
 </html>

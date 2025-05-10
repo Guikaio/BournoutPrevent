@@ -1,9 +1,9 @@
 from create_app import create_app
 
-# Create the application instance
+# Criar a instância da aplicação
 app = create_app()
 
-# Required for Gunicorn
+# Necessário para o Gunicorn
 application = app
 
 if __name__ == "__main__":

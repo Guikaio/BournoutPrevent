@@ -3,33 +3,35 @@ import logging
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
-# Configure logging
+# Configurar o logging
 logging.basicConfig(level=logging.DEBUG)
 
-# Initialize SQLAlchemy
+# Inicializar o SQLAlchemy
 db = SQLAlchemy()
 
+
 def create_app():
-    # Create Flask app
+    # Criar a aplicação Flask
     app = Flask(__name__)
-    
-    # Configure app
-    app.secret_key = os.environ.get("SESSION_SECRET", "burnout-prevention-secret-key")
-    
-    # Configure database - using SQLite
+
+    # Configurar a aplicação
+    app.secret_key = os.environ.get(
+        "SESSION_SECRET", "burnout-prevention-secret-key")
+
+    # Configurar o banco de dados - usando SQLite
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///burnout_prevention.db"
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-    
-    # Initialize database with app
+
+    # Inicializar o banco de dados com a aplicação
     db.init_app(app)
-    
-    # Create tables within application context
+
+    # Criar as tabelas dentro do contexto da aplicação
     with app.app_context():
         from models import User, Response
         db.create_all()
-    
-    # Import and register blueprints/routes
+
+    # Importar e registrar os blueprints/rotas
     from routes import init_app
     init_app(app)
-    
+
     return app

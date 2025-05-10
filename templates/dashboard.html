@@ -27,7 +27,7 @@
     {% else %}
     
     <div class="row">
-        <!-- Current Burnout Level -->
+        <!-- Nível atual de burnout -->
         <div class="col-lg-4 mb-4">
             <div class="card dashboard-card">
                 <div class="card-body">
@@ -53,7 +53,7 @@
             </div>
         </div>
         
-        <!-- Burnout History -->
+        <!-- Histórico de burnout -->
         <div class="col-lg-8 mb-4">
             <div class="card dashboard-card">
                 <div class="card-body">
@@ -67,10 +67,10 @@
         </div>
     </div>
     
-    <!-- Tips and Medical Alert Section -->
+    <!-- Dicas e alerta médico -->
     <div class="row">
         {% if latest_score >= 80 %}
-        <!-- Medical Alert for High Burnout -->
+        <!-- Alerta médico para burnout elevado -->
         <div class="col-12 mb-4">
             <div class="medical-alert">
                 <div class="d-flex align-items-center">
@@ -89,7 +89,7 @@
         </div>
         {% endif %}
         
-        <!-- Quick Tips -->
+        <!-- Dicas rápidas -->
         <div class="col-12 mb-4">
             <div class="card">
                 <div class="card-body">
@@ -150,10 +150,10 @@
 {% if has_completed_questionnaire %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Create burnout gauge chart
+        // Criar gráfico do nível de burnout atual
         createBurnoutScoreChart('burnoutChart', {{ latest_score }});
         
-        // Create burnout history chart
+        // Criar gráfico do histórico de burnout
         const historyData = [
             {% for entry in burnout_history %}
             {

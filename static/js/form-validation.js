@@ -1,10 +1,10 @@
 /**
- * Form validation for the Burnout Prevention System
- * This file contains validations for the registration, login and questionnaire forms
+ * Validação de formulários para o Sistema de Prevenção de Burnout
+ * Este arquivo contém validações para os formulários de cadastro, login e questionário
  */
 
 document.addEventListener('DOMContentLoaded', function() {
-  // Registration form validation
+  // Validação do formulário de cadastro
   const registrationForm = document.getElementById('registration-form');
   if (registrationForm) {
     registrationForm.addEventListener('submit', function(event) {
@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
   
-  // Login form validation
+  // Validação do formulário de login
   const loginForm = document.getElementById('login-form');
   if (loginForm) {
     loginForm.addEventListener('submit', function(event) {
@@ -24,13 +24,13 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
   
-  // Questionnaire form validation
+  // Validação do formulário de questionário
   const questionnaireForm = document.getElementById('questionnaire-form');
   if (questionnaireForm) {
     questionnaireForm.addEventListener('submit', function(event) {
       if (!validateQuestionnaireForm()) {
         event.preventDefault();
-        // Scroll to the first error
+        // Rola até o primeiro erro
         const firstError = document.querySelector('.is-invalid');
         if (firstError) {
           firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -41,19 +41,19 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 /**
- * Validates the registration form
- * @returns {boolean} Whether the form is valid
+ * Valida o formulário de cadastro
+ * @returns {boolean} Se o formulário é válido
  */
 function validateRegistrationForm() {
   let isValid = true;
   
-  // Get form fields
+  // Obtém os campos do formulário
   const nameInput = document.getElementById('name');
   const emailInput = document.getElementById('email');
   const passwordInput = document.getElementById('password');
   const confirmPasswordInput = document.getElementById('confirm-password');
   
-  // Validate name
+  // Valida nome
   if (!nameInput.value.trim()) {
     showError(nameInput, 'O nome é obrigatório');
     isValid = false;
@@ -61,7 +61,7 @@ function validateRegistrationForm() {
     clearError(nameInput);
   }
   
-  // Validate email
+  // Valida e-mail
   if (!emailInput.value.trim()) {
     showError(emailInput, 'O e-mail é obrigatório');
     isValid = false;
@@ -72,7 +72,7 @@ function validateRegistrationForm() {
     clearError(emailInput);
   }
   
-  // Validate password
+  // Valida senha
   if (!passwordInput.value) {
     showError(passwordInput, 'A senha é obrigatória');
     isValid = false;
@@ -83,7 +83,7 @@ function validateRegistrationForm() {
     clearError(passwordInput);
   }
   
-  // Validate confirm password
+  // Valida confirmação de senha
   if (confirmPasswordInput.value !== passwordInput.value) {
     showError(confirmPasswordInput, 'As senhas não coincidem');
     isValid = false;
@@ -95,17 +95,17 @@ function validateRegistrationForm() {
 }
 
 /**
- * Validates the login form
- * @returns {boolean} Whether the form is valid
+ * Valida o formulário de login
+ * @returns {boolean} Se o formulário é válido
  */
 function validateLoginForm() {
   let isValid = true;
   
-  // Get form fields
+  // Obtém os campos do formulário
   const emailInput = document.getElementById('email');
   const passwordInput = document.getElementById('password');
   
-  // Validate email
+  // Valida e-mail
   if (!emailInput.value.trim()) {
     showError(emailInput, 'O e-mail é obrigatório');
     isValid = false;
@@ -116,7 +116,7 @@ function validateLoginForm() {
     clearError(emailInput);
   }
   
-  // Validate password
+  // Valida senha
   if (!passwordInput.value) {
     showError(passwordInput, 'A senha é obrigatória');
     isValid = false;
@@ -128,23 +128,23 @@ function validateLoginForm() {
 }
 
 /**
- * Validates the questionnaire form
- * @returns {boolean} Whether the form is valid
+ * Valida o formulário de questionário
+ * @returns {boolean} Se o formulário é válido
  */
 function validateQuestionnaireForm() {
   let isValid = true;
   
-  // Get all question fields
+  // Obtém todos os campos das perguntas
   const radioQuestions = document.querySelectorAll('.question-card');
   
-  // Check each question
+  // Verifica cada pergunta
   radioQuestions.forEach(questionCard => {
     const questionId = questionCard.getAttribute('data-question-id');
     const radioInputs = document.querySelectorAll(`input[name="${questionId}"]`);
     const selectedInput = Array.from(radioInputs).find(input => input.checked);
     
     if (!selectedInput) {
-      // Show error for the question
+      // Mostra erro para a pergunta
       const feedbackDiv = questionCard.querySelector('.invalid-feedback');
       if (feedbackDiv) {
         feedbackDiv.style.display = 'block';
@@ -156,11 +156,11 @@ function validateQuestionnaireForm() {
         questionCard.appendChild(newFeedback);
       }
       
-      // Add invalid class to the question card
+      // Adiciona classe de erro ao card da pergunta
       questionCard.classList.add('is-invalid');
       isValid = false;
     } else {
-      // Clear error
+      // Limpa erro
       const feedbackDiv = questionCard.querySelector('.invalid-feedback');
       if (feedbackDiv) {
         feedbackDiv.style.display = 'none';
@@ -173,9 +173,9 @@ function validateQuestionnaireForm() {
 }
 
 /**
- * Checks if an email is valid
- * @param {string} email - The email to validate
- * @returns {boolean} Whether the email is valid
+ * Verifica se um e-mail é válido
+ * @param {string} email - O e-mail a ser validado
+ * @returns {boolean} Se o e-mail é válido
  */
 function isValidEmail(email) {
   const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -183,14 +183,14 @@ function isValidEmail(email) {
 }
 
 /**
- * Shows an error message for an input
- * @param {HTMLElement} inputElement - The input element
- * @param {string} message - The error message
+ * Mostra uma mensagem de erro para um campo
+ * @param {HTMLElement} inputElement - O campo de entrada
+ * @param {string} message - A mensagem de erro
  */
 function showError(inputElement, message) {
   inputElement.classList.add('is-invalid');
   
-  // Get or create feedback div
+  // Obtém ou cria o elemento de feedback
   let feedbackDiv = inputElement.nextElementSibling;
   if (!feedbackDiv || !feedbackDiv.classList.contains('invalid-feedback')) {
     feedbackDiv = document.createElement('div');
@@ -202,13 +202,13 @@ function showError(inputElement, message) {
 }
 
 /**
- * Clears error message for an input
- * @param {HTMLElement} inputElement - The input element
+ * Limpa a mensagem de erro de um campo
+ * @param {HTMLElement} inputElement - O campo de entrada
  */
 function clearError(inputElement) {
   inputElement.classList.remove('is-invalid');
   
-  // Clear feedback div
+  // Limpa o elemento de feedback
   const feedbackDiv = inputElement.nextElementSibling;
   if (feedbackDiv && feedbackDiv.classList.contains('invalid-feedback')) {
     feedbackDiv.textContent = '';
