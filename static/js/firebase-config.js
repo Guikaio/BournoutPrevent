@@ -1,50 +1,47 @@
 /**
- * Firebase configuration for the Burnout Prevention System
- * This file initializes Firebase and provides authentication functions
+ * Configuração do Firebase para o Sistema de Prevenção ao Burnout
+ * Este arquivo inicializa o Firebase e gerencia as funções de autenticação
  */
 
-// Initialize Firebase with provided configuration
+// Inicializa o Firebase com as configurações fornecidas
 function initializeFirebase(apiKey, projectId, appId) {
   const firebaseConfig = {
     apiKey: apiKey,
     authDomain: `${projectId}.firebaseapp.com`,
     projectId: projectId,
     storageBucket: `${projectId}.appspot.com`,
-    messagingSenderId: "123456789012", // This is a placeholder as we don't need messaging
+    messagingSenderId: "123456789012", // Placeholder, não utilizamos mensagens
     appId: appId
   };
 
-  // Initialize Firebase
+  // Inicializa o Firebase apenas se ainda não estiver inicializado
   if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
   }
-  
-  console.log("Firebase initialized successfully");
-  
-  // Set up auth state listener
+
+  console.log("Firebase inicializado com sucesso");
+
+  // Inicia o listener de autenticação
   setupAuthListener();
 }
 
-/**
- * Set up authentication state listener
- */
+// Configura o ouvinte para mudanças no estado de autenticação
 function setupAuthListener() {
   firebase.auth().onAuthStateChanged((user) => {
     updateNavigation(user);
-    
+
     if (user) {
-      // User is signed in
-      console.log("User is signed in:", user.displayName);
-      
-      // Check if we're on login or register page and need to redirect
+      // Usuário está logado
+      console.log("Usuário logado:", user.displayName);
+
       const currentPage = window.location.pathname;
       if (currentPage.includes('/login') || currentPage.includes('/register')) {
-        // Create session on server side
+        // Cria sessão no servidor
         const data = new FormData();
         data.append('email', user.email);
         data.append('name', user.displayName);
         data.append('firebase_uid', user.uid);
-        
+
         fetch('/auth/firebase-api', {
           method: 'POST',
           body: data
@@ -54,31 +51,25 @@ function setupAuthListener() {
           if (data.success && data.redirect) {
             window.location.href = data.redirect;
           } else {
-            console.error("Auth sync error:", data.error);
+            console.error("Erro ao sincronizar autenticação:", data.error);
           }
         })
         .catch(error => {
-          console.error("Error syncing auth state with server:", error);
+          console.error("Erro ao comunicar com o servidor:", error);
         });
       }
     } else {
-      // User is signed out
-      console.log("User is signed out");
+      // Usuário está deslogado
+      console.log("Usuário deslogado");
     }
   });
 }
 
-/**
- * Register a new user with email and password
- * @param {string} email - User's email
- * @param {string} password - User's password
- * @param {string} name - User's name
- * @returns {Promise} - Firebase auth promise
- */
+// Registra um novo usuário com email e senha
 function registerUser(email, password, name) {
   return firebase.auth().createUserWithEmailAndPassword(email, password)
     .then((userCredential) => {
-      // Update profile to add display name
+      // Atualiza o nome do usuário
       return userCredential.user.updateProfile({
         displayName: name
       }).then(() => {
@@ -87,58 +78,39 @@ function registerUser(email, password, name) {
     });
 }
 
-/**
- * Login a user with email and password
- * @param {string} email - User's email
- * @param {string} password - User's password
- * @returns {Promise} - Firebase auth promise
- */
+// Realiza login com email e senha
 function loginUser(email, password) {
   return firebase.auth().signInWithEmailAndPassword(email, password);
 }
 
-/**
- * Sign in with Google
- * @returns {Promise} - Firebase auth promise
- */
+// Realiza login com conta do Google
 function signInWithGoogle() {
   const provider = new firebase.auth.GoogleAuthProvider();
   return firebase.auth().signInWithPopup(provider);
 }
 
-/**
- * Logout the current user
- * @returns {Promise} - Firebase auth promise
- */
+// Faz logout do usuário atual
 function logoutUser() {
   return firebase.auth().signOut().then(() => {
-    // After signing out from Firebase, sign out from the server session
+    // Após o logout no Firebase, redireciona para o logout do servidor
     window.location.href = '/logout';
   });
 }
 
-/**
- * Get the current authenticated user
- * @returns {Object|null} - Firebase user object or null if not authenticated
- */
+// Retorna o usuário autenticado atual
 function getCurrentUser() {
   return firebase.auth().currentUser;
 }
 
-/**
- * Listen for auth state changes
- * @param {Function} callback - Callback function that receives the user object
- * @returns {Function} - Unsubscribe function
- */
+// Escuta mudanças na autenticação e chama o callback fornecido
 function onAuthStateChanged(callback) {
   return firebase.auth().onAuthStateChanged(callback);
 }
 
-// Listen for authentication changes and update UI
+// Ao carregar a página, configura os eventos de autenticação
 document.addEventListener('DOMContentLoaded', function() {
-  // Check if Firebase is defined
   if (typeof firebase !== 'undefined' && firebase.apps.length > 0) {
-    // Setup logout button
+    // Botão de logout
     const logoutBtn = document.getElementById('logout-button');
     if (logoutBtn) {
       logoutBtn.addEventListener('click', function(e) {
@@ -146,45 +118,41 @@ document.addEventListener('DOMContentLoaded', function() {
         logoutUser();
       });
     }
-    
-    // Setup email/password login form
+
+    // Formulário de login
     const loginForm = document.getElementById('login-form');
     if (loginForm) {
       loginForm.addEventListener('submit', function(e) {
         e.preventDefault();
-        
-        if (!validateLoginForm()) {
-          return;
-        }
-        
+
+        if (!validateLoginForm()) return;
+
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
-        
+
         loginUser(email, password)
           .catch(error => {
-            console.error("Login error:", error);
+            console.error("Erro no login:", error);
             alert("Erro ao fazer login: " + error.message);
           });
       });
     }
-    
-    // Setup registration form
+
+    // Formulário de cadastro
     const registrationForm = document.getElementById('registration-form');
     if (registrationForm) {
       registrationForm.addEventListener('submit', function(e) {
         e.preventDefault();
-        
-        if (!validateRegistrationForm()) {
-          return;
-        }
-        
+
+        if (!validateRegistrationForm()) return;
+
         const name = document.getElementById('name').value;
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
-        
+
         registerUser(email, password, name)
           .catch(error => {
-            console.error("Registration error:", error);
+            console.error("Erro no cadastro:", error);
             alert("Erro ao criar conta: " + error.message);
           });
       });
@@ -192,26 +160,23 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-/**
- * Update navigation based on authentication state
- * @param {Object|null} user - Firebase user object or null
- */
+// Atualiza a navegação com base na autenticação
 function updateNavigation(user) {
   const authNavItems = document.querySelectorAll('.auth-nav-item');
   const unauthNavItems = document.querySelectorAll('.unauth-nav-item');
-  
+
   if (user) {
-    // User is signed in
+    // Exibe itens para usuários autenticados
     authNavItems.forEach(item => item.style.display = 'block');
     unauthNavItems.forEach(item => item.style.display = 'none');
-    
-    // Update user display name if available
+
+    // Atualiza o nome do usuário no menu
     const userNameElement = document.getElementById('user-name');
     if (userNameElement && user.displayName) {
       userNameElement.textContent = user.displayName;
     }
   } else {
-    // User is signed out
+    // Exibe itens para visitantes
     authNavItems.forEach(item => item.style.display = 'none');
     unauthNavItems.forEach(item => item.style.display = 'block');
   }

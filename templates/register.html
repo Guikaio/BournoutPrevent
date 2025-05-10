@@ -4,15 +4,21 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8 col-lg-6">
+            <!-- Cartão visual com formulário de cadastro -->
             <div class="card auth-container fade-in">
                 <div class="card-body p-4 p-md-5">
+                    
+                    <!-- Cabeçalho e ícone de cadastro -->
                     <div class="text-center mb-4">
                         <i class="fas fa-user-plus fa-3x text-primary mb-3"></i>
                         <h2>Criar Conta</h2>
                         <p class="text-muted">Cadastre-se para acessar o sistema de prevenção de burnout</p>
                     </div>
                     
+                    <!-- Formulário de cadastro -->
                     <form id="registration-form" method="post" action="{{ url_for('register') }}">
+                        
+                        <!-- Campo: Nome completo -->
                         <div class="mb-3">
                             <label for="name" class="form-label">Nome completo</label>
                             <div class="input-group">
@@ -22,6 +28,7 @@
                             <div class="invalid-feedback"></div>
                         </div>
                         
+                        <!-- Campo: E-mail -->
                         <div class="mb-3">
                             <label for="email" class="form-label">E-mail</label>
                             <div class="input-group">
@@ -31,6 +38,7 @@
                             <div class="invalid-feedback"></div>
                         </div>
                         
+                        <!-- Campo: Senha -->
                         <div class="mb-3">
                             <label for="password" class="form-label">Senha</label>
                             <div class="input-group">
@@ -44,6 +52,7 @@
                             <div class="invalid-feedback"></div>
                         </div>
                         
+                        <!-- Campo: Confirmar senha -->
                         <div class="mb-4">
                             <label for="confirm-password" class="form-label">Confirmar senha</label>
                             <div class="input-group">
@@ -53,13 +62,15 @@
                             <div class="invalid-feedback"></div>
                         </div>
                         
+                        <!-- Botão de envio do formulário -->
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary btn-lg">
                                 <i class="fas fa-user-plus me-2"></i>Criar Conta
                             </button>
                         </div>
                     </form>
-                    
+
+                    <!-- Link para usuários que já têm conta -->
                     <div class="text-center mt-4">
                         <p>Já tem uma conta? <a href="{{ url_for('login') }}">Faça login</a></p>
                     </div>
@@ -72,11 +83,11 @@
 
 {% block scripts %}
 <script>
-    // Toggle password visibility
+    // Alterna a visibilidade do campo de senha
     document.getElementById('toggle-password').addEventListener('click', function() {
         const passwordInput = document.getElementById('password');
         const icon = this.querySelector('i');
-        
+
         if (passwordInput.type === 'password') {
             passwordInput.type = 'text';
             icon.classList.remove('fa-eye');
@@ -87,29 +98,27 @@
             icon.classList.add('fa-eye');
         }
     });
-    
-    // Form validation
+
+    // Validação do formulário ao enviar
     document.addEventListener('DOMContentLoaded', function() {
         const registrationForm = document.getElementById('registration-form');
         if (registrationForm) {
             registrationForm.addEventListener('submit', function(e) {
-                // Validate form before submission
                 const name = document.getElementById('name').value.trim();
                 const email = document.getElementById('email').value.trim();
                 const password = document.getElementById('password').value;
                 const confirmPassword = document.getElementById('confirm-password').value;
-                
                 let isValid = true;
-                
-                // Validate name
+
+                // Valida o campo nome
                 if (!name) {
                     showError(document.getElementById('name'), 'O nome é obrigatório');
                     isValid = false;
                 } else {
                     clearError(document.getElementById('name'));
                 }
-                
-                // Validate email
+
+                // Valida o campo email
                 if (!email) {
                     showError(document.getElementById('email'), 'O e-mail é obrigatório');
                     isValid = false;
@@ -119,8 +128,8 @@
                 } else {
                     clearError(document.getElementById('email'));
                 }
-                
-                // Validate password
+
+                // Valida o campo senha
                 if (!password) {
                     showError(document.getElementById('password'), 'A senha é obrigatória');
                     isValid = false;
@@ -130,35 +139,37 @@
                 } else {
                     clearError(document.getElementById('password'));
                 }
-                
-                // Validate password confirmation
+
+                // Valida confirmação da senha
                 if (password !== confirmPassword) {
                     showError(document.getElementById('confirm-password'), 'As senhas não coincidem');
                     isValid = false;
                 } else {
                     clearError(document.getElementById('confirm-password'));
                 }
-                
+
                 if (!isValid) {
-                    e.preventDefault();
+                    e.preventDefault(); // Impede envio se houver erros
                 }
             });
         }
     });
-    
-    // Validation helpers
+
+    // Verifica se o e-mail está no formato válido
     function isValidEmail(email) {
         const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return re.test(email);
     }
-    
+
+    // Exibe mensagem de erro
     function showError(inputElement, message) {
         const feedback = inputElement.parentElement.nextElementSibling;
         feedback.textContent = message;
         feedback.style.display = 'block';
         inputElement.classList.add('is-invalid');
     }
-    
+
+    // Remove mensagem de erro
     function clearError(inputElement) {
         const feedback = inputElement.parentElement.nextElementSibling;
         feedback.textContent = '';

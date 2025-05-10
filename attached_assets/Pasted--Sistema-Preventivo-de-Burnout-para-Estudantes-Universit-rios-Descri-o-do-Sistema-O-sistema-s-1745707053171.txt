@@ -200,5 +200,3 @@ O sistema será desenvolvido utilizando Flask e Python. A principal funcionalida
    - O usuário pode acessar dicas para prevenir o burnout.
    - Se a pontuação for superior a 80%, o sistema exibirá um alerta sugerindo que o usuário procure um médico especializado.
 
-## Objetivo:
-Criar um sistema de monitoramento e prevenção do burnout para estudantes universitários, com funcionalidades de avaliação, acompanhamento da evolução do nível de burnout e orientação preventiva.

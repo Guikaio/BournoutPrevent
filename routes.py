@@ -1,3 +1,4 @@
+# Importações necessárias
 import os
 import logging
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -7,109 +8,74 @@ from datetime import datetime
 from models import User, Response
 from create_app import db
 
-# Configure logging
+# Configura o nível de log para DEBUG
 logging.basicConfig(level=logging.DEBUG)
 
-# Helper functions
+# ------------------ Funções auxiliares ------------------
+
+
 def calculate_burnout_score(responses):
     """
-    Calculate burnout score based on the Maslach Burnout Inventory (MBI).
-    
-    This implementation uses a modified approach for students:
-    - Emotional Exhaustion (EE): Questions 5-9
-    - Depersonalization/Cynicism (DP): Questions 10-13
-    - Personal Accomplishment (PA): Questions 14-15 (reverse scored)
-    
-    The burnout score is calculated as: (EE + DP + (20 - PA)) / total_max_score * 100
+    Calcula a pontuação de burnout com base em respostas do questionário (modelo MBI).
+    Ajusta a pontuação com base em estilo de vida (sono, atividade física, apoio social).
     """
     try:
-        # Emotional Exhaustion (EE) - Questions 5-9
+        # Questões de Exaustão Emocional (5-9)
         ee_questions = [f"q{i}" for i in range(5, 10)]
-        ee_score = 0
-        for q in ee_questions:
-            if q in responses and responses[q].isdigit():
-                ee_score += int(responses[q])
-            
-        # Depersonalization/Cynicism (DP) - Questions 10-13
+        ee_score = sum(int(
+            responses[q]) for q in ee_questions if q in responses and responses[q].isdigit())
+
+        # Questões de Despersonalização (10-13)
         dp_questions = [f"q{i}" for i in range(10, 14)]
-        dp_score = 0
-        for q in dp_questions:
-            if q in responses and responses[q].isdigit():
-                dp_score += int(responses[q])
-            
-        # Personal Accomplishment (PA) - Questions 14-15 (reverse scored)
+        dp_score = sum(int(
+            responses[q]) for q in dp_questions if q in responses and responses[q].isdigit())
+
+        # Questões de Realização Pessoal (14-15) - reversas
         pa_questions = [f"q{i}" for i in range(14, 16)]
-        pa_score = 0
-        for q in pa_questions:
-            if q in responses and responses[q].isdigit():
-                # PA is reverse scored (higher is better)
-                pa_score += int(responses[q])
-        
-        # Reverse PA score (higher PA means lower burnout)
-        max_pa_score = 4 * len(pa_questions)  # 4 is max per question
-        reversed_pa_score = max_pa_score - pa_score
-        
-        # Calculate total score
+        pa_score = sum(int(
+            responses[q]) for q in pa_questions if q in responses and responses[q].isdigit())
+        reversed_pa_score = 4 * len(pa_questions) - pa_score  # Inversão
+
+        # Cálculo da pontuação base
         total_score = ee_score + dp_score + reversed_pa_score
-        
-        # Calculate max possible score
-        total_questions = len(ee_questions) + len(dp_questions) + len(pa_questions)
-        max_possible = 4 * total_questions  # Max score is 4 per question
-        
-        # Calculate burnout percentage
+        max_possible = 4 * (len(ee_questions) +
+                            len(dp_questions) + len(pa_questions))
         burnout_percentage = (total_score / max_possible) * 100
-        
-        # Additional factors from lifestyle questions (q16-q25)
-        # These adjust the score slightly based on lifestyle factors
+
+        # Ajustes de estilo de vida
         lifestyle_adjustment = 0
-        
-        # Sleep patterns (q18) - less sleep increases burnout risk
-        if "q18" in responses:
-            sleep_response = responses.get("q18")
-            if sleep_response == "Menos de 5 horas":
-                lifestyle_adjustment += 5
-            elif sleep_response == "5-6 horas":
-                lifestyle_adjustment += 2.5
-                
-        # Physical activity (q19) - less activity increases burnout risk
-        if "q19" in responses:
-            activity_response = responses.get("q19")
-            if activity_response == "Raramente ou nunca":
-                lifestyle_adjustment += 5
-            elif activity_response == "1-2 vezes por semana":
-                lifestyle_adjustment += 2.5
-                
-        # Social support (q20) - less support increases burnout risk
-        if "q20" in responses:
-            support_response = responses.get("q20")
-            if support_response == "Nenhum apoio":
-                lifestyle_adjustment += 5
-            elif support_response == "Pouco apoio":
-                lifestyle_adjustment += 2.5
-                
-        # Apply lifestyle adjustment (capped at 15%)
-        lifestyle_adjustment = min(lifestyle_adjustment, 15)
-        
-        # Apply adjustment but ensure score stays in 0-100 range
-        adjusted_score = min(100, burnout_percentage + lifestyle_adjustment)
-        
+        if responses.get("q18") == "Menos de 5 horas":
+            lifestyle_adjustment += 5
+        elif responses.get("q18") == "5-6 horas":
+            lifestyle_adjustment += 2.5
+        if responses.get("q19") == "Raramente ou nunca":
+            lifestyle_adjustment += 5
+        elif responses.get("q19") == "1-2 vezes por semana":
+            lifestyle_adjustment += 2.5
+        if responses.get("q20") == "Nenhum apoio":
+            lifestyle_adjustment += 5
+        elif responses.get("q20") == "Pouco apoio":
+            lifestyle_adjustment += 2.5
+
+        adjusted_score = min(100, burnout_percentage +
+                             min(lifestyle_adjustment, 15))
         return round(adjusted_score, 1)
     except Exception as e:
-        logging.error(f"Error calculating burnout score: {e}")
-        # Return a default moderate score if calculation fails
-        return 50.0
+        logging.error(f"Erro ao calcular burnout: {e}")
+        return 50.0  # valor padrão em caso de falha
+
 
 def is_authenticated():
-    """Check if user is logged in via session"""
+    """Verifica se o usuário está logado na sessão"""
     return 'user_id' in session
 
+
 def get_user_data(user_id):
-    """Retrieve user data from database"""
+    """Retorna os dados básicos do usuário a partir do ID"""
     try:
         user = User.query.get(user_id)
         if not user:
             return None
-        
         return {
             'name': user.name,
             'email': user.email,
@@ -117,198 +83,154 @@ def get_user_data(user_id):
             'last_assessment': user.last_assessment
         }
     except Exception as e:
-        logging.error(f"Error retrieving user data: {e}")
+        logging.error(f"Erro ao buscar usuário: {e}")
         return None
 
+
 def save_questionnaire_responses(user_id, responses, burnout_score):
-    """Save questionnaire responses to database"""
+    """Salva as respostas do questionário no banco de dados"""
     try:
-        # Get current timestamp
-        timestamp = datetime.now()
-        
-        # Get user from database
         user = User.query.get(user_id)
-        
         if not user:
-            logging.error(f"User not found in database: {user_id}")
+            logging.error(f"Usuário não encontrado: {user_id}")
             return False
-        
-        # Create new response
+
         new_response = Response(
-            user_id=user.id,
-            burnout_score=burnout_score,
-            timestamp=timestamp
-        )
-        
-        # Add individual question responses
+            user_id=user.id, burnout_score=burnout_score, timestamp=datetime.now())
+
+        # Preenchimento das respostas
         for q, answer in responses.items():
-            if hasattr(new_response, q):  # Check if question field exists
-                # Handle numeric responses (for burnout calculation questions)
+            if hasattr(new_response, q):
                 if q in [f"q{i}" for i in range(5, 16)] and answer.isdigit():
                     setattr(new_response, q, int(answer))
-                # Handle demographic and lifestyle questions with string values
-                elif q in [f"q{i}" for i in range(1, 5)] or q in [f"q{i}" for i in range(16, 26)]:
-                    # Store value 1 to indicate response was provided
-                    # Actual text responses are used in the burnout calculation 
-                    # but don't need to be stored in the integer fields
+                elif q in [f"q{i}" for i in range(1, 5)] + [f"q{i}" for i in range(16, 26)]:
                     setattr(new_response, q, 1)
-        
-        # Update user's latest score
+
         user.latest_burnout_score = burnout_score
-        user.last_assessment = timestamp
-        
-        # Add to database
+        user.last_assessment = datetime.now()
+
         db.session.add(new_response)
         db.session.commit()
-        
         return True
     except Exception as e:
         db.session.rollback()
-        logging.error(f"Error saving questionnaire responses: {e}")
+        logging.error(f"Erro ao salvar respostas: {e}")
         return False
 
+
 def get_burnout_history(user_id):
-    """Get user's burnout history"""
+    """Retorna o histórico de avaliações do usuário"""
     try:
-        # Get responses from database
-        responses = Response.query.filter_by(user_id=user_id).order_by(Response.timestamp).all()
-        
-        history = []
-        for response in responses:
-            history.append({
-                'score': response.burnout_score,
-                'timestamp': response.timestamp.strftime('%d/%m/%Y') if response.timestamp else 'Unknown'
-            })
-        
-        return history
+        responses = Response.query.filter_by(
+            user_id=user_id).order_by(Response.timestamp).all()
+        return [{'score': r.burnout_score, 'timestamp': r.timestamp.strftime('%d/%m/%Y')} for r in responses]
     except Exception as e:
-        logging.error(f"Error retrieving burnout history: {e}")
+        logging.error(f"Erro ao buscar histórico: {e}")
         return []
 
+# ------------------ Inicialização da aplicação ------------------
+
+
 def init_app(app):
-    # Configure Flask-Login
+    # Configura o Flask-Login
     login_manager = LoginManager()
     login_manager.init_app(app)
     login_manager.login_view = 'login'
-    
+
     @login_manager.user_loader
     def load_user(user_id):
         return User.query.get(int(user_id))
-    
-    # Routes
+
+    # ------------------ Rotas ------------------
+
     @app.route('/')
     def index():
         if is_authenticated():
             return redirect(url_for('dashboard'))
-        
         return render_template('index.html')
-    
+
     @app.route('/register', methods=['GET', 'POST'])
     def register():
         if is_authenticated():
             return redirect(url_for('dashboard'))
-        
         if request.method == 'POST':
             email = request.form.get('email')
             password = request.form.get('password')
             name = request.form.get('name')
-            
+
             if not email or not password or not name:
                 flash('Por favor, preencha todos os campos', 'error')
                 return redirect(url_for('register'))
-            
+
             try:
-                # Check if user already exists
-                existing_user = User.query.filter_by(email=email).first()
-                if existing_user:
+                if User.query.filter_by(email=email).first():
                     flash('Este e-mail já está em uso.', 'error')
                     return redirect(url_for('register'))
-                
-                # Create user in database
-                user = User(
-                    name=name,
-                    email=email,
-                    created_at=datetime.now()
-                )
+
+                user = User(name=name, email=email, created_at=datetime.now())
                 user.set_password(password)
-                
+
                 db.session.add(user)
                 db.session.commit()
-                
-                flash('Conta criada com sucesso! Por favor, faça login.', 'success')
+                flash('Conta criada com sucesso! Faça login.', 'success')
                 return redirect(url_for('login'))
-            
             except Exception as e:
                 db.session.rollback()
-                logging.error(f"Registration error: {e}")
-                flash('Erro ao criar conta. Este e-mail pode já estar em uso.', 'error')
-        
+                logging.error(f"Erro no registro: {e}")
+                flash('Erro ao criar conta.', 'error')
         return render_template('register.html')
-    
+
     @app.route('/login', methods=['GET', 'POST'])
     def login():
         if is_authenticated():
             return redirect(url_for('dashboard'))
-        
+
         if request.method == 'POST':
             email = request.form.get('email')
             password = request.form.get('password')
-            
+
             if not email or not password:
-                flash('Por favor, preencha todos os campos', 'error')
+                flash('Preencha todos os campos', 'error')
                 return redirect(url_for('login'))
-            
+
             try:
-                # Find user by email
                 user = User.query.filter_by(email=email).first()
-                
                 if not user or not user.check_password(password):
                     flash('Email ou senha inválidos', 'error')
                     return redirect(url_for('login'))
-                
-                # Set up session
+
                 session['user_id'] = user.id
                 session['user_name'] = user.name
                 session['user_email'] = user.email
-                
-                # Log in using Flask-Login
+
                 login_user(user)
-                
                 flash('Login realizado com sucesso!', 'success')
                 return redirect(url_for('dashboard'))
-                
             except Exception as e:
-                logging.error(f"Login error: {e}")
-                flash('Ocorreu um erro durante o login. Tente novamente.', 'error')
-        
+                logging.error(f"Erro no login: {e}")
+                flash('Erro durante o login.', 'error')
         return render_template('login.html')
-    
+
     @app.route('/logout')
     def logout():
-        logout_user()  # Flask-Login logout
-        session.clear()  # Clear session
+        logout_user()
+        session.clear()
         flash('Você foi desconectado', 'info')
         return redirect(url_for('index'))
-    
+
     @app.route('/dashboard')
     @login_required
     def dashboard():
-        user_id = current_user.id  # Use Flask-Login's current_user
+        user_id = current_user.id
         user_data = get_user_data(user_id)
-        
         if not user_data:
-            flash('Erro ao carregar dados do usuário', 'error')
+            flash('Erro ao carregar dados.', 'error')
             return redirect(url_for('index'))
-        
-        # Get burnout history
+
         burnout_history = get_burnout_history(user_id)
-        
-        # Get latest burnout score
         latest_score = user_data.get('latest_burnout_score')
-        
-        # Check if the user has completed the questionnaire
         has_completed_questionnaire = latest_score is not None
-        
+
         return render_template(
             'dashboard.html',
             user_name=user_data.get('name'),
@@ -316,40 +238,34 @@ def init_app(app):
             burnout_history=burnout_history,
             has_completed_questionnaire=has_completed_questionnaire
         )
-    
+
     @app.route('/questionnaire', methods=['GET', 'POST'])
     @login_required
     def questionnaire():
         if request.method == 'POST':
-            user_id = current_user.id  # Use Flask-Login's current_user
-            
-            # Extract responses from form
-            responses = {key: request.form.get(key) for key in request.form if key.startswith('q')}
-            
-            # Calculate burnout score
-            burnout_score = calculate_burnout_score(responses)
-            
-            # Save responses to database
-            if save_questionnaire_responses(user_id, responses, burnout_score):
-                flash('Questionário enviado com sucesso!', 'success')
+            user_id = current_user.id
+            responses = {k: request.form.get(
+                k) for k in request.form if k.startswith('q')}
+            score = calculate_burnout_score(responses)
+            if save_questionnaire_responses(user_id, responses, score):
+                flash('Respostas salvas com sucesso!', 'success')
             else:
-                flash('Erro ao salvar respostas. Tente novamente.', 'error')
-            
+                flash('Erro ao salvar respostas.', 'error')
             return redirect(url_for('dashboard'))
-        
         return render_template('questionnaire.html')
-    
+
     @app.route('/tips')
     @login_required
     def tips():
         return render_template('tips.html')
-    
-    # Error handlers
+
+    # ------------------ Tratamento de erros ------------------
+
     @app.errorhandler(404)
     def page_not_found(e):
         return render_template('index.html'), 404
-    
+
     @app.errorhandler(500)
     def server_error(e):
-        logging.error(f"Server error: {e}")
+        logging.error(f"Erro interno: {e}")
         return render_template('index.html'), 500

@@ -1,49 +1,49 @@
 /**
- * Chart.js configuration for the Burnout Prevention System
- * This file contains configurations for all charts used in the dashboard
+ * Configurações do Chart.js para o Sistema de Prevenção ao Burnout
+ * Este arquivo contém todas as configurações dos gráficos do dashboard
  */
 
-// Configure responsive behavior for all charts
+// Habilita comportamento responsivo para todos os gráficos
 Chart.defaults.responsive = true;
 Chart.defaults.maintainAspectRatio = false;
 
 /**
- * Creates a doughnut chart to display burnout score
- * @param {string} canvasId - The ID of the canvas element
- * @param {number} burnoutScore - The burnout score percentage
+ * Cria um gráfico de rosca para exibir o nível de burnout
+ * @param {string} canvasId - ID do elemento canvas
+ * @param {number} burnoutScore - Porcentagem do nível de burnout
  */
 function createBurnoutScoreChart(canvasId, burnoutScore) {
-  // Get the canvas element
+  // Obtém o contexto do canvas
   const ctx = document.getElementById(canvasId).getContext('2d');
   
-  // Define chart colors based on score
+  // Define a cor do gráfico com base na pontuação
   let color;
   if (burnoutScore < 40) {
-    color = '#28a745'; // Green for low burnout
+    color = '#28a745'; // Verde para burnout baixo
   } else if (burnoutScore < 70) {
-    color = '#ffc107'; // Yellow for medium burnout
+    color = '#ffc107'; // Amarelo para burnout moderado
   } else {
-    color = '#dc3545'; // Red for high burnout
+    color = '#dc3545'; // Vermelho para burnout alto
   }
   
-  // Create the chart
+  // Cria o gráfico de rosca
   new Chart(ctx, {
     type: 'doughnut',
     data: {
       datasets: [{
-        data: [burnoutScore, 100 - burnoutScore],
+        data: [burnoutScore, 100 - burnoutScore], // Porcentagem preenchida e restante
         backgroundColor: [color, '#e9ecef'],
         borderWidth: 0
       }]
     },
     options: {
-      cutout: '75%',
+      cutout: '75%', // Tamanho do centro oco
       plugins: {
         legend: {
-          display: false
+          display: false // Oculta a legenda
         },
         tooltip: {
-          enabled: false
+          enabled: false // Desativa os tooltips
         }
       },
       animation: {
@@ -53,7 +53,7 @@ function createBurnoutScoreChart(canvasId, burnoutScore) {
     }
   });
   
-  // Add score text in the center of doughnut
+  // Adiciona o texto da pontuação no centro do gráfico
   const centerText = document.createElement('div');
   centerText.style.position = 'absolute';
   centerText.style.top = '50%';
@@ -64,18 +64,19 @@ function createBurnoutScoreChart(canvasId, burnoutScore) {
   centerText.style.color = color;
   centerText.textContent = `${burnoutScore}%`;
   
+  // Insere o texto central dentro do container do gráfico
   const chartContainer = document.getElementById(canvasId).parentNode;
   chartContainer.style.position = 'relative';
   chartContainer.appendChild(centerText);
 }
 
 /**
- * Creates a line chart to display burnout history
- * @param {string} canvasId - The ID of the canvas element
- * @param {Array} historyData - Array of objects with timestamp and score properties
+ * Cria um gráfico de linha para exibir o histórico do nível de burnout
+ * @param {string} canvasId - ID do elemento canvas
+ * @param {Array} historyData - Array com objetos contendo timestamp e score
  */
 function createBurnoutHistoryChart(canvasId, historyData) {
-  // Handle empty data
+  // Se não houver dados, exibe mensagem
   if (!historyData || historyData.length === 0) {
     const container = document.getElementById(canvasId).parentNode;
     const message = document.createElement('div');
@@ -85,19 +86,19 @@ function createBurnoutHistoryChart(canvasId, historyData) {
     return;
   }
   
-  // Get the canvas element
+  // Obtém o contexto do canvas
   const ctx = document.getElementById(canvasId).getContext('2d');
   
-  // Extract dates and scores
+  // Extrai as datas e os níveis de burnout
   const labels = historyData.map(item => item.timestamp);
   const scores = historyData.map(item => item.score);
   
-  // Create gradient
+  // Cria um gradiente para o fundo da linha
   const gradient = ctx.createLinearGradient(0, 0, 0, 400);
   gradient.addColorStop(0, 'rgba(63, 99, 180, 0.6)');
   gradient.addColorStop(1, 'rgba(63, 99, 180, 0.1)');
   
-  // Create the chart
+  // Cria o gráfico de linha
   new Chart(ctx, {
     type: 'line',
     data: {
@@ -159,7 +160,7 @@ function createBurnoutHistoryChart(canvasId, historyData) {
   });
 }
 
-// Automatically adjust charts on window resize
+// Redimensiona os gráficos automaticamente ao alterar o tamanho da janela
 window.addEventListener('resize', function() {
   if (Chart.instances) {
     for (let chart of Object.values(Chart.instances)) {

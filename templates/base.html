@@ -4,34 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema Preventivo de Burnout para Estudantes</title>
-    
-    <!-- Bootstrap CSS -->
+
+    <!-- Estilo do Bootstrap com tema escuro -->
     <link href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css" rel="stylesheet">
-    
-    <!-- Font Awesome -->
+
+    <!-- Ícones do Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Chart.js -->
+
+    <!-- Biblioteca Chart.js para gráficos -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
-    
-    <!-- Custom CSS -->
+
+    <!-- Estilo personalizado do sistema -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    
-    <!-- Removed Firebase SDK references -->
 </head>
 <body>
-    <!-- Navbar -->
+    <!-- Barra de navegação -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
+            <!-- Marca do sistema -->
             <a class="navbar-brand" href="{{ url_for('index') }}">
                 <i class="fas fa-brain me-2"></i>Burnout Prevention
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+
+            <!-- Botão de menu para dispositivos móveis -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
+
+            <!-- Itens da barra de navegação -->
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <!-- Itens de navegação para usuários autenticados -->
+                    <!-- Itens visíveis apenas para usuários logados -->
                     <li class="nav-item auth-nav-item" style="display: {% if session.get('user_id') %}block{% else %}none{% endif %}">
                         <a class="nav-link" href="{{ url_for('dashboard') }}">
                             <i class="fas fa-chart-line me-1"></i>Dashboard
@@ -47,16 +51,19 @@
                             <i class="fas fa-lightbulb me-1"></i>Dicas
                         </a>
                     </li>
+                    <!-- Menu do usuário logado -->
                     <li class="nav-item dropdown auth-nav-item" style="display: {% if session.get('user_id') %}block{% else %}none{% endif %}">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-user-circle me-1"></i><span id="user-name">{{ session.get('user_name', 'Usuário') }}</span>
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-circle me-1"></i>
+                            <span id="user-name">{{ session.get('user_name', 'Usuário') }}</span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                             <li><a class="dropdown-item" href="#" id="logout-button">Sair</a></li>
                         </ul>
                     </li>
-                    
-                    <!-- Itens de navegação para usuários não autenticados -->
+
+                    <!-- Itens visíveis apenas para visitantes (não autenticados) -->
                     <li class="nav-item unauth-nav-item" style="display: {% if session.get('user_id') %}none{% else %}block{% endif %}">
                         <a class="nav-link" href="{{ url_for('login') }}">
                             <i class="fas fa-sign-in-alt me-1"></i>Login
@@ -71,8 +78,8 @@
             </div>
         </div>
     </nav>
-    
-    <!-- Flash Messages -->
+
+    <!-- Área de mensagens de alerta (sucesso, erro, etc.) -->
     <div class="container mt-3">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
@@ -85,54 +92,44 @@
             {% endif %}
         {% endwith %}
     </div>
-    
-    <!-- Main Content -->
+
+    <!-- Conteúdo principal (trocado dinamicamente por página) -->
     <main class="py-4">
         {% block content %}{% endblock %}
     </main>
-    
-    <!-- Footer -->
+
+    <!-- Rodapé do site -->
     <footer class="bg-dark text-light py-4">
         <div class="container">
             <div class="row">
+                <!-- Informações do sistema -->
                 <div class="col-md-6">
                     <h5>Sistema Preventivo de Burnout</h5>
                     <p>Uma ferramenta para ajudar estudantes universitários a monitorar e prevenir o burnout acadêmico.</p>
                 </div>
+
+                <!-- Redes sociais -->
                 <div class="col-md-6 text-md-end">
                     <ul class="list-inline">
-                        <li class="list-inline-item">
-                            <a href="#" class="text-light">
-                                <i class="fab fa-facebook-f"></i>
-                            </a>
-                        </li>
-                        <li class="list-inline-item">
-                            <a href="#" class="text-light">
-                                <i class="fab fa-twitter"></i>
-                            </a>
-                        </li>
-                        <li class="list-inline-item">
-                            <a href="#" class="text-light">
-                                <i class="fab fa-instagram"></i>
-                            </a>
-                        </li>
+                        <li class="list-inline-item"><a href="#" class="text-light"><i class="fab fa-facebook-f"></i></a></li>
+                        <li class="list-inline-item"><a href="#" class="text-light"><i class="fab fa-twitter"></i></a></li>
+                        <li class="list-inline-item"><a href="#" class="text-light"><i class="fab fa-instagram"></i></a></li>
                     </ul>
                     <p class="mb-0">© 2023 Burnout Prevention. Todos os direitos reservados.</p>
                 </div>
             </div>
         </div>
     </footer>
-    
-    <!-- Bootstrap JS Bundle -->
+
+    <!-- Script do Bootstrap (JS e funcionalidades de componentes) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- Custom Scripts -->
+
+    <!-- Scripts personalizados do sistema -->
     <script src="{{ url_for('static', filename='js/chart-config.js') }}"></script>
     <script src="{{ url_for('static', filename='js/form-validation.js') }}"></script>
-    
-    <!-- Custom Scripts -->
+
+    <!-- Script para botão de logout -->
     <script>
-        // Logout button functionality
         document.addEventListener('DOMContentLoaded', function() {
             const logoutBtn = document.getElementById('logout-button');
             if (logoutBtn) {
@@ -143,8 +140,8 @@
             }
         });
     </script>
-    
-    <!-- Page-specific scripts -->
+
+    <!-- Scripts específicos de cada página -->
     {% block scripts %}{% endblock %}
 </body>
 </html>

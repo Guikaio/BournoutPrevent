@@ -2,6 +2,7 @@
 
 {% block content %}
 <div class="container">
+    <!-- Cabeçalho com botão para nova avaliação -->
     <div class="row mb-4">
         <div class="col-12">
             <div class="d-flex align-items-center justify-content-between">
@@ -10,10 +11,13 @@
                     <i class="fas fa-clipboard-list me-2"></i>Nova Avaliação
                 </a>
             </div>
-            <p class="text-secondary">Bem-vindo(a), {{ user_name }}! Acompanhe seu nível de burnout e histórico de avaliações.</p>
+            <p class="text-secondary">
+                Bem-vindo(a), {{ user_name }}! Acompanhe seu nível de burnout e histórico de avaliações.
+            </p>
         </div>
     </div>
-    
+
+    <!-- Caso o usuário ainda não tenha respondido o questionário -->
     {% if not has_completed_questionnaire %}
     <div class="row mb-4">
         <div class="col-12">
@@ -24,10 +28,12 @@
             </div>
         </div>
     </div>
-    {% else %}
     
+    {% else %}
+
+    <!-- Se houver dados, exibe gráficos e informações -->
     <div class="row">
-        <!-- Current Burnout Level -->
+        <!-- Nível de burnout atual -->
         <div class="col-lg-4 mb-4">
             <div class="card dashboard-card">
                 <div class="card-body">
@@ -37,6 +43,7 @@
                         <canvas id="burnoutChart"></canvas>
                     </div>
                     
+                    <!-- Exibe pontuação com feedback visual -->
                     <div class="text-center">
                         {% if latest_score < 40 %}
                         <span class="score-display score-low">{{ latest_score }}%</span>
@@ -52,8 +59,8 @@
                 </div>
             </div>
         </div>
-        
-        <!-- Burnout History -->
+
+        <!-- Gráfico de histórico de avaliações -->
         <div class="col-lg-8 mb-4">
             <div class="card dashboard-card">
                 <div class="card-body">
@@ -66,11 +73,11 @@
             </div>
         </div>
     </div>
-    
-    <!-- Tips and Medical Alert Section -->
+
+    <!-- Alerta médico e dicas rápidas -->
     <div class="row">
         {% if latest_score >= 80 %}
-        <!-- Medical Alert for High Burnout -->
+        <!-- Alerta médico quando burnout é crítico -->
         <div class="col-12 mb-4">
             <div class="medical-alert">
                 <div class="d-flex align-items-center">
@@ -80,22 +87,24 @@
                     <div>
                         <h3 class="h4 mb-2">Alerta Médico - Atenção!</h3>
                         <p class="mb-0">
-                            Seu nível de burnout está muito elevado ({{ latest_score }}%). Recomendamos fortemente que 
-                            procure ajuda profissional. Consulte um psicólogo ou psiquiatra para uma avaliação completa.
+                            Seu nível de burnout está muito elevado ({{ latest_score }}%). 
+                            Recomendamos fortemente que procure ajuda profissional. 
+                            Consulte um psicólogo ou psiquiatra para uma avaliação completa.
                         </p>
                     </div>
                 </div>
             </div>
         </div>
         {% endif %}
-        
-        <!-- Quick Tips -->
+
+        <!-- Dicas rápidas para o usuário -->
         <div class="col-12 mb-4">
             <div class="card">
                 <div class="card-body">
                     <h3 class="card-title h5 mb-3">Dicas Rápidas</h3>
-                    
+
                     <div class="row g-3">
+                        <!-- Sono -->
                         <div class="col-md-4">
                             <div class="d-flex">
                                 <div class="me-3">
@@ -107,7 +116,8 @@
                                 </div>
                             </div>
                         </div>
-                        
+
+                        <!-- Atividade física -->
                         <div class="col-md-4">
                             <div class="d-flex">
                                 <div class="me-3">
@@ -119,7 +129,8 @@
                                 </div>
                             </div>
                         </div>
-                        
+
+                        <!-- Pausas -->
                         <div class="col-md-4">
                             <div class="d-flex">
                                 <div class="me-3">
@@ -132,7 +143,8 @@
                             </div>
                         </div>
                     </div>
-                    
+
+                    <!-- Link para mais dicas -->
                     <div class="text-center mt-4">
                         <a href="{{ url_for('tips') }}" class="btn btn-outline-primary">
                             <i class="fas fa-lightbulb me-2"></i>Ver Todas as Dicas
@@ -150,10 +162,10 @@
 {% if has_completed_questionnaire %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Create burnout gauge chart
+        // Cria o gráfico de nível atual de burnout
         createBurnoutScoreChart('burnoutChart', {{ latest_score }});
-        
-        // Create burnout history chart
+
+        // Prepara os dados para o gráfico de histórico
         const historyData = [
             {% for entry in burnout_history %}
             {
@@ -162,6 +174,7 @@
             },
             {% endfor %}
         ];
+        // Cria o gráfico de histórico
         createBurnoutHistoryChart('historyChart', historyData);
     });
 </script>
