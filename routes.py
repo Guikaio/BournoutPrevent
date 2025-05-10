@@ -90,7 +90,7 @@ def calculate_burnout_score(responses):
         total_possible = 4 * (len(ee_questions) +
                               len(dp_questions) + len(pa_questions))
 
-        # Calcular porcentagem de burnout
+        # Calcular porcentagem de Burnout
         burnout_percentage = (total_score / total_possible) * 100
 
         # Aplicar ajuste de estilo de vida
@@ -149,13 +149,13 @@ def save_questionnaire_responses(user_id, responses, burnout_score):
         # Adiciona as respostas individuais das questões
         for q, answer in responses.items():
             if hasattr(new_response, q):  # Verifica se o campo da questão existe
-                # Trata as respostas numéricas (para questões de cálculo de burnout)
+                # Trata as respostas numéricas (para questões de cálculo de Burnout)
                 if q in [f"q{i}" for i in range(5, 16)] and answer.isdigit():
                     setattr(new_response, q, int(answer))
                 # Trata as questões demográficas e de estilo de vida com valores textuais
                 elif q in [f"q{i}" for i in range(1, 5)] or q in [f"q{i}" for i in range(16, 26)]:
                     # Armazena o valor 1 para indicar que a resposta foi fornecida
-                    # As respostas textuais são usadas no cálculo de burnout,
+                    # As respostas textuais são usadas no cálculo de Burnout,
                     # mas não precisam ser armazenadas nos campos inteiros
                     setattr(new_response, q, 1)
 
@@ -175,7 +175,7 @@ def save_questionnaire_responses(user_id, responses, burnout_score):
 
 
 def get_burnout_history(user_id):
-    """Obtém o histórico de burnout do usuário"""
+    """Obtém o histórico de Burnout do usuário"""
     try:
         # Obtém as respostas do banco de dados
         responses = Response.query.filter_by(
@@ -309,10 +309,10 @@ def init_app(app):
             flash('Erro ao carregar dados do usuário', 'error')
             return redirect(url_for('index'))
 
-        # Obtém o histórico de burnout
+        # Obtém o histórico de Burnout
         burnout_history = get_burnout_history(user_id)
 
-        # Obtém a última pontuação de burnout
+        # Obtém a última pontuação de Burnout
         latest_score = user_data.get('latest_burnout_score')
 
         # Verifica se o usuário completou o questionário
@@ -336,7 +336,7 @@ def init_app(app):
             responses = {key: request.form.get(
                 key) for key in request.form if key.startswith('q')}
 
-            # Calcula a pontuação de burnout
+            # Calcula a pontuação de Burnout
             burnout_score = calculate_burnout_score(responses)
 
             # Salva as respostas no banco de dados
