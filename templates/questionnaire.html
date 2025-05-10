@@ -27,13 +27,13 @@
             </div>
             
             <form id="questionnaire-form" method="post" action="{{ url_for('questionnaire') }}">
-                <!-- Demographic Questions -->
+                <!-- Perguntas Demográficas -->
                 <div class="card mb-4">
                     <div class="card-header bg-light">
                         <h3 class="h5 mb-0">Dados Demográficos</h3>
                     </div>
                     <div class="card-body">
-                        <!-- Question 1: Age -->
+                        <!-- Pergunta 1: Idade -->
                         <div class="question-card mb-4" data-question-id="q1">
                             <label class="question-text">1. Qual sua idade?</label>
                             <div class="mb-3">
@@ -60,7 +60,7 @@
                             </div>
                         </div>
                         
-                        <!-- Question 2: Gender -->
+                        <!-- Pergunta 2: Gênero -->
                         <div class="question-card mb-4" data-question-id="q2">
                             <label class="question-text">2. Gênero:</label>
                             <div class="mb-3">
@@ -83,7 +83,7 @@
                             </div>
                         </div>
                         
-                        <!-- Question 3: Year -->
+                        <!-- Pergunta 3: Ano do Curso -->
                         <div class="question-card mb-4" data-question-id="q3">
                             <label class="question-text">3. Ano do curso:</label>
                             <div class="mb-3">
@@ -106,7 +106,7 @@
                             </div>
                         </div>
                         
-                        <!-- Question 4: Course Area -->
+                        <!-- Pergunta 4: Área do Curso -->
                         <div class="question-card mb-4" data-question-id="q4">
                             <label class="question-text">4. Área do curso:</label>
                             <div class="mb-3">
@@ -139,14 +139,14 @@
                     </div>
                 </div>
                 
-                <!-- Burnout Assessment Questions -->
+                <!-- Perguntas de Avaliação de Burnout -->
                 <div class="card mb-4">
                     <div class="card-header bg-light">
                         <h3 class="h5 mb-0">Avaliação de Burnout</h3>
                         <small class="text-muted">Para cada afirmação, selecione a frequência com que você experimenta esses sentimentos.</small>
                     </div>
                     <div class="card-body">
-                        <!-- Question 5: Emotional Exhaustion -->
+                        <!-- Pergunta 5: Exaustão Emocional -->
                         <div class="question-card mb-4" data-question-id="q5">
                             <label class="question-text">5. Sinto-me emocionalmente exausto(a) devido aos meus estudos.</label>
                             <div class="mb-3">
@@ -172,8 +172,8 @@
                                 </div>
                             </div>
                         </div>
-                        
-                        <!-- Question 6: After Classes Energy -->
+
+                        <!-- Pergunta 6: Energia após Aulas -->
                         <div class="question-card mb-4" data-question-id="q6">
                             <label class="question-text">6. Após minhas aulas, sinto-me sem energia para realizar outras atividades.</label>
                             <div class="mb-3">
@@ -199,9 +199,8 @@
                                 </div>
                             </div>
                         </div>
-                        
-                        <!-- Questions 7-15 follow the same pattern -->
-                        <!-- Question 7: Physical Exhaustion -->
+
+                        <!-- Pergunta 7: Exaustão Física -->
                         <div class="question-card mb-4" data-question-id="q7">
                             <label class="question-text">7. Meus estudos têm me deixado fisicamente exausto(a).</label>
                             <div class="mb-3">
@@ -227,8 +226,8 @@
                                 </div>
                             </div>
                         </div>
-                        
-                        <!-- Question 8: Physical Sensations -->
+
+                        <!-- Pergunta 8: Sensações Físicas -->
                         <div class="question-card mb-4" data-question-id="q8">
                             <label class="question-text">8. Sinto sensações físicas desagradáveis após um dia de estudo intenso.</label>
                             <div class="mb-3">
@@ -254,8 +253,8 @@
                                 </div>
                             </div>
                         </div>
-                        
-                        <!-- Question 9: Rest After Study -->
+
+                        <!-- Pergunta 9: Necessidade de Descanso -->
                         <div class="question-card mb-4" data-question-id="q9">
                             <label class="question-text">9. Após um dia de estudo, só consigo pensar em descansar.</label>
                             <div class="mb-3">
@@ -281,8 +280,8 @@
                                 </div>
                             </div>
                         </div>
-                        
-                        <!-- Question 10: Energy to Complete Course -->
+
+                        <!-- Pergunta 10: Energia para Concluir o Curso -->
                         <div class="question-card mb-4" data-question-id="q10">
                             <label class="question-text">10. Tenho dúvidas se terei energia suficiente para concluir meu curso.</label>
                             <div class="mb-3">
@@ -308,11 +307,8 @@
                                 </div>
                             </div>
                         </div>
-                        
-                        <!-- Continue with questions 11-15 following the same pattern -->
-                        <!-- For brevity, I'm skipping adding all questions but would be included in a real app -->
-                        
-                        <!-- Question 11: Change Course -->
+
+                        <!-- Pergunta 11: Mudança de Curso -->
                         <div class="question-card mb-4" data-question-id="q11">
                             <label class="question-text">11. Penso frequentemente em mudar de curso.</label>
                             <div class="mb-3">
@@ -338,16 +334,116 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-                
-                <!-- Study Habits and Lifestyle Questions -->
-                <div class="card mb-4">
-                    <div class="card-header bg-light">
-                        <h3 class="h5 mb-0">Hábitos de Estudo e Estilo de Vida</h3>
-                    </div>
-                    <div class="card-body">
-                        <!-- Question 16: Study Hours -->
+
+                        <!-- Pergunta 12: Desapego Emocional -->
+                        <div class="question-card mb-4" data-question-id="q12">
+                            <label class="question-text">12. Eu me sinto desapegado(a) emocionalmente com relação aos meus colegas de curso.</label>
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="q12" id="q12-0" value="0">
+                                    <label class="form-check-label" for="q12-0">0 - Nunca</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="q12" id="q12-1" value="1">
+                                    <label class="form-check-label" for="q12-1">1 - Raramente</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="q12" id="q12-2" value="2">
+                                    <label class="form-check-label" for="q12-2">2 - Às vezes</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="q12" id="q12-3" value="3">
+                                    <label class="form-check-label" for="q12-3">3 - Frequentemente</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="q12" id="q12-4" value="4">
+                                    <label class="form-check-label" for="q12-4">4 - Sempre</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pergunta 13: Cinismo -->
+                        <div class="question-card mb-4" data-question-id="q13">
+                            <label class="question-text">13. Eu sinto que os outros não valorizam meus esforços acadêmicos.</label>
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="q13" id="q13-0" value="0">
+                                    <label class="form-check-label" for="q13-0">0 - Nunca</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="q13" id="q13-1" value="1">
+                                    <label class="form-check-label" for="q13-1">1 - Raramente</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="q13" id="q13-2" value="2">
+                                    <label class="form-check-label" for="q13-2">2 - Às vezes</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="q13" id="q13-3" value="3">
+                                    <label class="form-check-label" for="q13-3">3 - Frequentemente</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="q13" id="q13-4" value="4">
+                                    <label class="form-check-label" for="q13-4">4 - Sempre</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pergunta 14: Realização Pessoal -->
+                        <div class="question-card mb-4" data-question-id="q14">
+                            <label class="question-text">14. Eu sinto que estou tendo sucesso em meus estudos.</label>
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="q14" id="q14-0" value="0">
+                                    <label class="form-check-label" for="q14-0">0 - Nunca</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="q14" id="q14-1" value="1">
+                                    <label class="form-check-label" for="q14-1">1 - Raramente</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="q14" id="q14-2" value="2">
+                                    <label class="form-check-label" for="q14-2">2 - Às vezes</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="q14" id="q14-3" value="3">
+                                    <label class="form-check-label" for="q14-3">3 - Frequentemente</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="q14" id="q14-4" value="4">
+                                    <label class="form-check-label" for="q14-4">4 - Sempre</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pergunta 15: Falta de Interesse -->
+                        <div class="question-card mb-4" data-question-id="q15">
+                            <label class="question-text">15. Eu sinto que os estudos não me interessam mais.</label>
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="q15" id="q15-0" value="0">
+                                    <label class="form-check-label" for="q15-0">0 - Nunca</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="q15" id="q15-1" value="1">
+                                    <label class="form-check-label" for="q15-1">1 - Raramente</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="q15" id="q15-2" value="2">
+                                    <label class="form-check-label" for="q15-2">2 - Às vezes</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="q15" id="q15-3" value="3">
+                                    <label class="form-check-label" for="q15-3">3 - Frequentemente</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="q15" id="q15-4" value="4">
+                                    <label class="form-check-label" for="q15-4">4 - Sempre</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pergunta 16: Horas de Estudo -->
                         <div class="question-card mb-4" data-question-id="q16">
                             <label class="question-text">16. Quantas horas por dia, em média, você dedica aos estudos?</label>
                             <div class="mb-3">
@@ -369,8 +465,8 @@
                                 </div>
                             </div>
                         </div>
-                        
-                        <!-- Question 17: Rest Time -->
+
+                        <!-- Pergunta 17: Tempo para Descanso -->
                         <div class="question-card mb-4" data-question-id="q17">
                             <label class="question-text">17. Você sente que tem tempo suficiente para descansar e se recuperar do estresse acadêmico?</label>
                             <div class="mb-3">
@@ -392,8 +488,8 @@
                                 </div>
                             </div>
                         </div>
-                        
-                        <!-- Question 18: Sleep -->
+
+                        <!-- Pergunta 18: Quantidade de Sono -->
                         <div class="question-card mb-4" data-question-id="q18">
                             <label class="question-text">18. Quantas horas em média você dorme por noite?</label>
                             <div class="mb-3">
@@ -415,8 +511,8 @@
                                 </div>
                             </div>
                         </div>
-                        
-                        <!-- Question 19: Physical Activity -->
+
+                        <!-- Pergunta 19: Atividade Física -->
                         <div class="question-card mb-4" data-question-id="q19">
                             <label class="question-text">19. Com que frequência você pratica atividades físicas?</label>
                             <div class="mb-3">
@@ -438,8 +534,8 @@
                                 </div>
                             </div>
                         </div>
-                        
-                        <!-- Question 20: Social Support -->
+
+                        <!-- Pergunta 20: Apoio Social -->
                         <div class="question-card mb-4" data-question-id="q20">
                             <label class="question-text">20. Você tem apoio social (amigos, família) para lidar com o estresse acadêmico?</label>
                             <div class="mb-3">
@@ -461,8 +557,8 @@
                                 </div>
                             </div>
                         </div>
-                        
-                        <!-- Question 21: Nutrition -->
+
+                        <!-- Pergunta 21: Nutrição -->
                         <div class="question-card mb-4" data-question-id="q21">
                             <label class="question-text">21. Como você classificaria sua alimentação durante o período acadêmico?</label>
                             <div class="mb-3">
@@ -488,8 +584,8 @@
                                 </div>
                             </div>
                         </div>
-                        
-                        <!-- Question 22: Leisure Activities -->
+
+                        <!-- Pergunta 22: Atividades de Lazer -->
                         <div class="question-card mb-4" data-question-id="q22">
                             <label class="question-text">22. Com que frequência você participa de atividades de lazer?</label>
                             <div class="mb-3">
@@ -511,8 +607,8 @@
                                 </div>
                             </div>
                         </div>
-                        
-                        <!-- Question 23: Future Perspective -->
+
+                        <!-- Pergunta 23: Perspectiva de Futuro -->
                         <div class="question-card mb-4" data-question-id="q23">
                             <label class="question-text">23. Como você se sente em relação ao seu futuro profissional?</label>
                             <div class="mb-3">
@@ -538,8 +634,8 @@
                                 </div>
                             </div>
                         </div>
-                        
-                        <!-- Question 24: Coping Strategies -->
+
+                        <!-- Pergunta 24: Estratégias de Enfrentamento -->
                         <div class="question-card mb-4" data-question-id="q24">
                             <label class="question-text">24. Quais estratégias você utiliza para lidar com o estresse acadêmico? (Selecione a mais frequente)</label>
                             <div class="mb-3">
@@ -565,8 +661,8 @@
                                 </div>
                             </div>
                         </div>
-                        
-                        <!-- Question 25: Seeking Help -->
+
+                        <!-- Pergunta 25: Procurar Ajuda -->
                         <div class="question-card mb-4" data-question-id="q25">
                             <label class="question-text">25. Você já procurou ajuda profissional para lidar com questões relacionadas ao estresse ou burnout?</label>
                             <div class="mb-3">
@@ -595,6 +691,7 @@
                     </div>
                 </div>
                 
+                <!-- Botões de Envio -->
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-4">
                     <button type="reset" class="btn btn-outline-secondary btn-lg">
                         <i class="fas fa-redo me-2"></i>Limpar
