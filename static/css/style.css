@@ -1,28 +1,26 @@
-/* Estilos personalizados para o Sistema de Prevenção ao Burnout */
+/* Custom styles for Burnout Prevention System */
 
-/* Cores globais do sistema */
+/* Global styles */
 :root {
-  --bs-primary: #3f63b4;       /* Cor primária (azul) */
-  --bs-secondary: #6c757d;     /* Cor secundária (cinza) */
-  --bs-success: #28a745;       /* Cor para sucesso (verde) */
-  --bs-danger: #dc3545;        /* Cor para alerta crítico (vermelho) */
-  --bs-warning: #ffc107;       /* Cor para alerta moderado (amarelo) */
-  --bs-info: #17a2b8;          /* Cor para informações (ciano) */
+  --bs-primary: #3f63b4;
+  --bs-secondary: #6c757d;
+  --bs-success: #28a745;
+  --bs-danger: #dc3545;
+  --bs-warning: #ffc107;
+  --bs-info: #17a2b8;
 }
 
-/* Ajusta o corpo da página para ocupar a altura toda */
 body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
-/* Permite que o conteúdo principal ocupe o espaço restante */
 main {
   flex: 1;
 }
 
-/* Tamanhos de fontes responsivos para títulos */
+/* Responsive font sizes */
 h1 {
   font-size: calc(1.75rem + 1.5vw);
 }
@@ -35,12 +33,12 @@ h3 {
   font-size: calc(1.25rem + 0.5vw);
 }
 
-/* Estilização da marca da barra de navegação */
+/* Navbar styling */
 .navbar-brand {
   font-weight: bold;
 }
 
-/* Estilização dos cards (caixas de conteúdo) */
+/* Card styling */
 .card {
   border-radius: 0.5rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -54,42 +52,38 @@ h3 {
   transform: translateY(-5px);
 }
 
-/* Cabeçalho dos cards */
 .card-header {
   background-color: rgba(40, 45, 65, 0.8) !important;
   color: #e9ecef;
   border-bottom: 1px solid rgba(60, 65, 85, 0.8);
 }
 
-/* Container centralizado para login e cadastro */
+/* Login and registration forms */
 .auth-container {
   max-width: 450px;
   margin: 2rem auto;
 }
 
-/* Espaçamento entre perguntas do questionário */
+/* Questionnaire styling */
 .question-card {
   margin-bottom: 1.5rem;
 }
 
-/* Estilo do texto da pergunta */
 .question-text {
   font-weight: 500;
   margin-bottom: 1rem;
 }
 
-/* Cor do texto das opções do formulário */
 .form-check {
   color: #e9ecef;
 }
 
-/* Estilo para opções marcadas */
 .form-check-input:checked {
   background-color: var(--bs-primary);
   border-color: var(--bs-primary);
 }
 
-/* Estilo escuro para campos de formulário */
+/* Formulários em modo escuro */
 .form-control {
   background-color: rgba(30, 35, 50, 0.8);
   border-color: rgba(60, 65, 85, 0.8);
@@ -103,32 +97,29 @@ h3 {
   box-shadow: 0 0 0 0.2rem rgba(63, 99, 180, 0.25);
 }
 
-/* Estilo escuro para seletores */
 .form-select {
   background-color: rgba(30, 35, 50, 0.8);
   border-color: rgba(60, 65, 85, 0.8);
   color: #e9ecef;
 }
 
-/* Card de informações do dashboard */
+/* Dashboard styling */
 .dashboard-card {
   height: 100%;
 }
 
-/* Estilo do número da pontuação de burnout */
 .score-display {
   font-size: 3rem;
   font-weight: bold;
 }
 
-/* Tamanho e posição do gráfico */
 .chart-container {
   position: relative;
   height: 300px;
   width: 100%;
 }
 
-/* Cores de alerta de acordo com o nível de burnout */
+/* Alert levels for burnout scores */
 .score-low {
   color: var(--bs-success);
 }
@@ -141,7 +132,7 @@ h3 {
   color: var(--bs-danger);
 }
 
-/* Estilo dos cartões de dicas */
+/* Tips page styling */
 .tip-card {
   height: 100%;
   transition: all 0.2s ease;
@@ -152,41 +143,44 @@ h3 {
   box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
 }
 
-/* Ícone dentro das dicas */
 .tip-icon {
   font-size: 2.5rem;
   margin-bottom: 1rem;
 }
 
-/* Estilos para telas pequenas (responsividade) */
+/* Media queries for responsive design */
 @media (max-width: 767.98px) {
+  /* Smaller padding on mobile */
   .container {
     padding-left: 15px;
     padding-right: 15px;
   }
-
+  
+  /* Adjust form elements for mobile */
   .form-control, .btn {
     font-size: 1rem;
     padding: 0.5rem 0.75rem;
   }
-
+  
+  /* Smaller charts on mobile */
   .chart-container {
     height: 250px;
   }
-
+  
+  /* Stack cards on mobile */
   .card-deck {
     display: block;
   }
 }
 
-/* Estilos para tablets */
 @media (min-width: 768px) and (max-width: 991.98px) {
+  /* Adjustments for tablets */
   .chart-container {
     height: 275px;
   }
 }
 
-/* Alerta médico para pontuação alta de burnout */
+/* Medical alert styling */
 .medical-alert {
   background-color: var(--bs-danger);
   color: white;
@@ -195,13 +189,12 @@ h3 {
   margin-bottom: 1.5rem;
 }
 
-/* Ícone do alerta médico */
 .medical-alert-icon {
   font-size: 2rem;
   margin-right: 1rem;
 }
 
-/* Estilo dos controles personalizados para toque em mobile */
+/* Custom checkbox and radio styling for better mobile touch */
 .custom-control {
   padding-left: 2rem;
 }
@@ -215,7 +208,7 @@ h3 {
   padding-top: 0.125rem;
 }
 
-/* Animação de fade-in */
+/* Animations */
 .fade-in {
   animation: fadeIn 0.5s ease-in;
 }
@@ -225,14 +218,14 @@ h3 {
   to { opacity: 1; }
 }
 
-/* Rodapé da página */
+/* Footer styling */
 footer {
   margin-top: auto;
   padding: 1.5rem 0;
   background-color: var(--bs-light);
 }
 
-/* Estilização da lista de recursos */
+/* Resources list styling */
 .resource-list {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
@@ -249,7 +242,7 @@ footer {
   transform: translateY(-2px);
 }
 
-/* Estilo dos itens da lista */
+/* List group styling */
 .list-group-item {
   background-color: rgba(25, 30, 45, 0.8);
   color: #e9ecef;
