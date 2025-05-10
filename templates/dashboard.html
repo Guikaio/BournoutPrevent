@@ -22,12 +22,12 @@
                 <strong>Você ainda não completou nenhuma avaliação.</strong> 
                 Responda ao questionário para ver seus resultados aqui.
             </div>
-        </div>
+        </div> 
     </div>
     {% else %}
     
     <div class="row">
-        <!-- Nível atual de burnout -->
+        <!-- Nível de Burnout Atual -->
         <div class="col-lg-4 mb-4">
             <div class="card dashboard-card">
                 <div class="card-body">
@@ -53,7 +53,7 @@
             </div>
         </div>
         
-        <!-- Histórico de burnout -->
+        <!-- Histórico de Burnout -->
         <div class="col-lg-8 mb-4">
             <div class="card dashboard-card">
                 <div class="card-body">
@@ -67,10 +67,10 @@
         </div>
     </div>
     
-    <!-- Dicas e alerta médico -->
+    <!-- Dicas e Alerta Médico -->
     <div class="row">
         {% if latest_score >= 80 %}
-        <!-- Alerta médico para burnout elevado -->
+        <!-- Alerta Médico para Alto Nível de Burnout -->
         <div class="col-12 mb-4">
             <div class="medical-alert">
                 <div class="d-flex align-items-center">
@@ -89,7 +89,7 @@
         </div>
         {% endif %}
         
-        <!-- Dicas rápidas -->
+        <!-- Dicas Rápidas -->
         <div class="col-12 mb-4">
             <div class="card">
                 <div class="card-body">
@@ -150,10 +150,10 @@
 {% if has_completed_questionnaire %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Criar gráfico do nível de burnout atual
+        // Criar gráfico de nível de burnout
         createBurnoutScoreChart('burnoutChart', {{ latest_score }});
         
-        // Criar gráfico do histórico de burnout
+        // Criar gráfico de histórico de burnout
         const historyData = [
             {% for entry in burnout_history %}
             {
