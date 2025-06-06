@@ -58,29 +58,133 @@ def calculate_burnout_score(responses):
         # Ajustes com base no estilo de vida (Q16-Q25)
         lifestyle_adjustment = 0
 
-        # Padrões de sono (Q18) - Menos sono aumenta o risco de burnout
+        # Questionário Q16 - Horas de Estudo
+        if "q16" in responses:
+            study_response = responses.get("q16")
+            if study_response == "Menos de 2 horas por dia":
+                lifestyle_adjustment += 5
+            elif study_response == "2-4 horas por dia":
+                lifestyle_adjustment += 2.5
+            elif study_response == "4-6 horas por dia":
+                lifestyle_adjustment += 1
+            elif study_response == "6 horas ou mais por dia":
+                lifestyle_adjustment += 0
+
+        # Questionário Q17 - Tempo para Descanso
+        if "q17" in responses:
+            rest_response = responses.get("q17")
+            if rest_response == "Sim, sempre":
+                lifestyle_adjustment += 0
+            elif rest_response == "Às vezes":
+                lifestyle_adjustment += 1
+            elif rest_response == "Raramente":
+                lifestyle_adjustment += 2.5
+            elif rest_response == "Nunca":
+                lifestyle_adjustment += 5
+
+        # Questionário Q18 - Quantidade de Sono
         if "q18" in responses:
             sleep_response = responses.get("q18")
-            if sleep_response == "Menos de 5 horas":
-                lifestyle_adjustment += 5
+            if sleep_response == "Mais de 8 horas":
+                lifestyle_adjustment += 0
+            elif sleep_response == "7-8 horas":
+                lifestyle_adjustment += 1
             elif sleep_response == "5-6 horas":
                 lifestyle_adjustment += 2.5
+            elif sleep_response == "Menos de 5 horas":
+                lifestyle_adjustment += 5
 
-        # Atividade física (Q19) - Menos atividade aumenta o risco de burnout
+        # Questionário Q19 - Atividade Física
         if "q19" in responses:
             activity_response = responses.get("q19")
-            if activity_response == "Raramente ou nunca":
-                lifestyle_adjustment += 5
+            if activity_response == "Diariamente":
+                lifestyle_adjustment += 0
+            elif activity_response == "3-5 vezes por semana":
+                lifestyle_adjustment += 1
             elif activity_response == "1-2 vezes por semana":
                 lifestyle_adjustment += 2.5
+            elif activity_response == "Raramente ou nunca":
+                lifestyle_adjustment += 5
 
-        # Apoio social (Q20) - Menos apoio aumenta o risco de burnout
+        # Questionário Q20 - Apoio Social
         if "q20" in responses:
             support_response = responses.get("q20")
-            if support_response == "Nenhum apoio":
-                lifestyle_adjustment += 5
+            if support_response == "Sim, muito apoio":
+                lifestyle_adjustment += 0
+            elif support_response == "Apoio moderado":
+                lifestyle_adjustment += 1
             elif support_response == "Pouco apoio":
                 lifestyle_adjustment += 2.5
+            elif support_response == "Nenhum apoio":
+                lifestyle_adjustment += 5
+
+        # Questionário Q21 - Nutrição
+        if "q21" in responses:
+            diet_response = responses.get("q21")
+            if diet_response == "Muito boa":
+                lifestyle_adjustment += 0
+            elif diet_response == "Boa":
+                lifestyle_adjustment += 1
+            elif diet_response == "Regular":
+                lifestyle_adjustment += 2.5
+            elif diet_response == "Ruim":
+                lifestyle_adjustment += 5
+            elif diet_response == "Muito ruim":
+                lifestyle_adjustment += 5
+
+        # Questionário Q22 - Atividades de Lazer
+        if "q22" in responses:
+            leisure_response = responses.get("q22")
+            if leisure_response == "Regularmente (várias vezes por semana)":
+                lifestyle_adjustment += 0
+            elif leisure_response == "Ocasionalmente (uma vez por semana)":
+                lifestyle_adjustment += 1
+            elif leisure_response == "Raramente (poucas vezes por mês)":
+                lifestyle_adjustment += 2.5
+            elif leisure_response == "Quase nunca":
+                lifestyle_adjustment += 5
+
+        # Questionário Q23 - Perspectiva de Futuro
+        if "q23" in responses:
+            future_response = responses.get("q23")
+            if future_response == "Muito otimista":
+                lifestyle_adjustment += 0
+            elif future_response == "Otimista":
+                lifestyle_adjustment += 1
+            elif future_response == "Neutro":
+                lifestyle_adjustment += 2.5
+            elif future_response == "Pessimista":
+                lifestyle_adjustment += 5
+            elif future_response == "Muito pessimista":
+                lifestyle_adjustment += 5
+
+        # Questionário Q24 - Estratégias de Enfrentamento
+        if "q24" in responses:
+            coping_response = responses.get("q24")
+            if coping_response == "Técnicas de respiração/meditação":
+                lifestyle_adjustment += 0
+            elif coping_response == "Atividade física":
+                lifestyle_adjustment += 1
+            elif coping_response == "Conversar com amigos/família":
+                lifestyle_adjustment += 2.5
+            elif coping_response == "Atividades de lazer":
+                lifestyle_adjustment += 2.5
+            elif coping_response == "Não tenho estratégias específicas":
+                lifestyle_adjustment += 5
+
+        # Questionário Q25 - Procurar Ajuda
+        if "q25" in responses:
+            help_response = responses.get("q25")
+            if help_response == "Sim, regularmente":
+                lifestyle_adjustment += 0
+            elif help_response == "Sim, ocasionalmente":
+                lifestyle_adjustment += 1
+            elif help_response == "Apenas uma vez":
+                lifestyle_adjustment += 2.5
+            elif help_response == "Nunca, mas considero necessário":
+                lifestyle_adjustment += 3.5
+            elif help_response == "Nunca procurei":
+                lifestyle_adjustment += 5
 
         # Limite de ajuste de estilo de vida
         lifestyle_adjustment = min(lifestyle_adjustment, 15)
